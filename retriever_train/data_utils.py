@@ -3,8 +3,6 @@ import numpy as np
 import pickle
 import random
 
-MAX_ROBERTA_LENGTH = 502
-
 random.seed(12)
 logger = logging.getLogger(__name__)
 
@@ -125,37 +123,6 @@ def string_to_ids(text, tokenizer):
     return tokenizer.convert_tokens_to_ids(tokenizer.tokenize(text))
 
 
-def get_label_dict(data_dir):
-    label_dict = {}
-    with open("{}/dict.txt".format(data_dir)) as f:
-        label_dict_lines = f.read().strip().split("\n")
-    for i, x in enumerate(label_dict_lines):
-        if x.startswith("madeupword"):
-            continue
-        label_dict[x.split()[0]] = i
-    reverse_label_dict = {v: k for k, v in label_dict.items()}
-
-    return label_dict, reverse_label_dict
-
-
-def get_global_dense_features(data_dir, global_dense_feature_list, label_dict):
-    """Get dense style code vectors for the style code model."""
-
-    global_dense_features = []
-    if global_dense_feature_list != "none":
-        logger.info("Using global dense vector features = %s" % global_dense_feature_list)
-        for gdf in global_dense_feature_list.split(","):
-            with open("{}/{}_dense_vectors.pickle".format(data_dir, gdf), "rb") as f:
-                vector_data = pickle.load(f)
-
-            final_vectors = {}
-            for k, v in vector_data.items():
-                final_vectors[label_dict[k]] = v["sum"] / v["total"]
-
-            global_dense_features.append((gdf, final_vectors))
-    return global_dense_features
-
-
 def limit_dataset_size(dataset, limit_examples):
     """Limit the dataset size to a small number for debugging / generation."""
 
@@ -163,18 +130,6 @@ def limit_dataset_size(dataset, limit_examples):
         logger.info("Limiting dataset to {:d} examples".format(limit_examples))
         dataset = dataset[:limit_examples]
 
-    return dataset
-
-
-def limit_styles(dataset, specific_style_train, split, reverse_label_dict):
-    """Limit the dataset size to a certain author."""
-    specific_style_train = [int(x) for x in specific_style_train.split(",")]
-
-    original_dataset_size = len(dataset)
-    if split in ["train", "test"] and -1 not in specific_style_train:
-        logger.info("Preserving authors = {}".format(", ".join([reverse_label_dict[x] for x in specific_style_train])))
-        dataset = [x for x in dataset if x["suffix_style"] in specific_style_train]
-        logger.info("Remaining instances after author filtering = {:d} / {:d}".format(len(dataset), original_dataset_size))
     return dataset
 
 

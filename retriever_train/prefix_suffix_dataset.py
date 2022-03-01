@@ -12,12 +12,8 @@ from torch.utils.data import Dataset
 
 from data_utils import (
     Instance,
-    get_label_dict,
-    get_global_dense_features,
     datum_to_dict,
-    limit_styles,
     limit_dataset_size,
-    string_to_ids,
     update_config,
 )
 from dataset_config import (
