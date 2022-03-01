@@ -73,25 +73,16 @@ for combo in combinations:
             schedule_script = schedule_script.replace("{%s}" % k, str(v))
 
     for k, v in combo.items():
-        if "{%s}" % k in generation_script:
-            generation_script = generation_script.replace("{%s}" % k, str(v))
-
-    for k, v in combo.items():
         if "{%s}" % k in evaluate_script:
             evaluate_script = evaluate_script.replace("{%s}" % k, str(v))
 
     schedule_script += "\n"
-    generation_script += "\n"
     evaluate_script += "\n"
 
     # Write schedule script
     script_name = 'retriever_train/slurm-schedulers/schedule_%d.sh' % run_id
     with open(script_name, 'w') as f:
         f.write(schedule_script)
-
-    generation_script_name = 'retriever_train/slurm-schedulers/generate_%d.sh' % run_id
-    with open(generation_script_name, 'w') as f:
-        f.write(generation_script)
 
     evaluate_script_name = 'retriever_train/slurm-schedulers/evaluate_%d.sh' % run_id
     with open(evaluate_script_name, 'w') as f:
@@ -102,7 +93,6 @@ for combo in combinations:
 
     # Making files executable
     subprocess.check_output('chmod +x %s' % script_name, shell=True)
-    subprocess.check_output('chmod +x %s' % generation_script_name, shell=True)
     subprocess.check_output('chmod +x %s' % evaluate_script_name, shell=True)
 
     # Update experiment logs

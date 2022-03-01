@@ -11,7 +11,7 @@
 # Experiment Details :- {top_details}
 # Run Details :- {lower_details}
 
-source /mnt/nfs/work1/miyyer/kalpesh/projects/retrieval-lm/.bashrc
+source relic-venv/bin/activate
 export DATA_DIR={dataset}
 
 BASE_DIR=retriever_train
