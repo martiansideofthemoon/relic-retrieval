@@ -51,4 +51,10 @@ This script launches both train / evaluation processes simultaneously on SLURM g
 
 You may need to make minor changes to [`retriever_train/run_finetune_gpt2_template.sh`](retriever_train/run_finetune_gpt2_template.sh), [`retriever_train/run_evaluate_gpt2_template.sh`](retriever_train/run_evaluate_gpt2_template.sh) and [`retriever_train/schedule.py`](retriever_train/schedule.py) to make them compatible with your SLURM setup.
 
+## Evaluation
+
+(coming soon)
+
 ## Running Baselines (DPR, BM25, SIM, c-REALM, ColBERT)
+
+(coming soon)
