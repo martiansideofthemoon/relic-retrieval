@@ -11,10 +11,12 @@
 # Experiment Details :- RoBERTa-base retriever on new RELIC dataset.
 # Run Details :- accumulation = 1, batch_size = 1, beam_size = 1, cpus = 3, dataset = relic_preprocessed/left_4_right_4_neg_100, eval_batch_size = 1, eval_frequency_min = 10, global_dense_feature_list = none, gpu = rtx8000-short, learning_rate = 1e-5, master_port = 4999, memory = 45, model_name = roberta-base, negative_examples = suffix, ngpus = 1, num_epochs = 10, optimizer = adam, prefix_input_type = original, prefix_truncate_dir = both, save_steps = 250, save_total_limit = -1, specific_style_train = -1, stop_token = eos
 
-source /mnt/nfs/work1/miyyer/kalpesh/projects/retrieval-lm/.bashrc
+source relic-venv/bin/activate
 export DATA_DIR=relic_preprocessed/left_4_right_4_neg_100
 
 BASE_DIR=retriever_train
+
+echo $HOSTNAME
 
 python -m torch.distributed.launch --master_port 5006 --nproc_per_node=1 $BASE_DIR/run_lm_finetuning.py \
     --output_dir=$BASE_DIR/saved_models/model_4_4 \
