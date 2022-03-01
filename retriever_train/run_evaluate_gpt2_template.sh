@@ -33,9 +33,6 @@ python -m torch.distributed.launch --nproc_per_node=1 $BASE_DIR/run_lm_finetunin
     --limit_examples 1000 \
     --job_id {job_id} \
     --learning_rate {learning_rate} \
-    --prefix_input_type {prefix_input_type} \
-    --global_dense_feature_list {global_dense_feature_list} \
-    --specific_style_train {specific_style_train} \
     --eval_frequency_min {eval_frequency_min} \
     --negative_examples {negative_examples} \
     --prefix_truncate_dir {prefix_truncate_dir}

@@ -16,10 +16,8 @@ import torch
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
-from collections import defaultdict
 
 from args import get_parser
-from data_utils import MAX_ROBERTA_LENGTH
 from prefix_suffix_dataset import PrefixSuffixDataset
 from transformers import (
     AdamW, RobertaConfig, RobertaModel, RobertaTokenizerFast, get_linear_schedule_with_warmup
@@ -27,10 +25,7 @@ from transformers import (
 
 from utils import PrefixSuffixModel, init_parent_model
 
-try:
-    from torch.utils.tensorboard import SummaryWriter
-except ImportError:
-    from tensorboardX import SummaryWriter
+from tensorboardX import SummaryWriter
 
 
 logger = logging.getLogger(__name__)
@@ -360,8 +355,6 @@ def main():
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path,
                                           cache_dir=args.cache_dir if args.cache_dir else None)
-    # Adding an extra embedding dimension for style/content vectors
-    config.extra_embedding_dim = args.extra_embedding_dim
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
                                                 do_lower_case=args.do_lower_case,
                                                 cache_dir=args.cache_dir if args.cache_dir else None)

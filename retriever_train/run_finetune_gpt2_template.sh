@@ -38,9 +38,6 @@ python -m torch.distributed.launch --master_port {master_port} --nproc_per_node=
     --per_gpu_train_batch_size {batch_size} \
     --job_id {job_id} \
     --learning_rate {learning_rate} \
-    --prefix_input_type {prefix_input_type} \
-    --global_dense_feature_list {global_dense_feature_list} \
-    --specific_style_train {specific_style_train} \
     --optimizer {optimizer} \
     --negative_examples {negative_examples} \
     --prefix_truncate_dir {prefix_truncate_dir}

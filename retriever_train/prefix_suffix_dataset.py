@@ -13,8 +13,7 @@ from torch.utils.data import Dataset
 from data_utils import (
     Instance,
     datum_to_dict,
-    limit_dataset_size,
-    update_config,
+    limit_dataset_size
 )
 from dataset_config import (
     BASE_CONFIG3,
@@ -34,7 +33,6 @@ class PrefixSuffixDataset(Dataset):
         else:
             self.config = BASE_CONFIG3
 
-        update_config(self.args, self.config)
         logger.info(self.config)
 
         self.examples = []

@@ -1,19 +1,9 @@
 import logging
-import pickle
 import os
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 import numpy as np
-
-from collections import namedtuple
-
-from functools import partial
-
-from dataset_config import DATASET_CONFIG
-from data_utils import update_config, Instance
-
 
 logger = logging.getLogger(__name__)
 

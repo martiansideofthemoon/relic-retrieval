@@ -7,13 +7,8 @@ def get_parser(parser_type, model_classes=None, all_models=None):
     # Base parameters
     parser.add_argument("--data_dir", default=None, type=str, required=True,
                         help="The input dataset directory.")
-
-    parser.add_argument('--extra_embedding_dim', type=int, default=768,
-                        help="Size of linear layer used for projecting extra embeddings.")
-
     parser.add_argument("--no_cuda", action='store_true',
                         help="Avoid using CUDA when available")
-
     parser.add_argument("--local_rank", type=int, default=-1,
                         help="For distributed training: local_rank")
     parser.add_argument('--seed', type=int, default=42,
@@ -24,16 +19,10 @@ def get_parser(parser_type, model_classes=None, all_models=None):
     parser.add_argument("--do_lower_case", action='store_true',
                         help="Set this flag if you are using an uncased model.")
     parser.add_argument("--job_id", type=str, default="test")
-
     parser.add_argument("--target_style_override", type=str, default="none")
     parser.add_argument("--negative_examples", type=str, default="suffix")
-    parser.add_argument("--prefix_input_type", type=str, default="original",
-                        help=("The text used as context for generation, which is 'original' for paraphrasing and a "
-                              "paraphrase model ID for inverse paraphrasing."))
-
-    parser.add_argument("--prefix_truncate_dir", type=str, default="left")
-    parser.add_argument("--global_dense_feature_list", type=str, default="none")
-    parser.add_argument("--specific_style_train", type=str, default="-1")
+    parser.add_argument("--prefix_truncate_dir", type=str, default="both",
+                        help="The direction of truncation in the prefix strings")
 
     if parser_type == "finetuning":
         parser.add_argument("--output_dir", default=None, type=str, required=True,

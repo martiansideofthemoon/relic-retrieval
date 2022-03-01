@@ -11,6 +11,7 @@ virtualenv relic-venv
 source relic-venv/bin/activate
 pip install torch torchvision # currently, this is the version compatible with CUDA 10.1
 pip install transformers
+pip install tensorboardX
 pip install --editable .
 ```
 
@@ -33,11 +34,11 @@ There are two ways to run training ---
 ```
 # in terminal 1
 # you may need to run "export CUDA_VISIBLE_DEVICES=0" to use GPU-0
-retriever_train/examples/schedule.sh
+bash retriever_train/examples/schedule.sh
 
 # in terminal 2
 # you may need to run "export CUDA_VISIBLE_DEVICES=1" to use GPU-1
-retriever_train/examples/evaluate.sh
+bash retriever_train/examples/evaluate.sh
 ```
 
 2. If you have a SLURM setup, you can configure model hyperparameters using [`retriever_train/hyperparameter_config.py`](retriever_train/hyperparameter_config.py) (which supports grid search too) and then run,

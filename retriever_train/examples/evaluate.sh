@@ -35,9 +35,6 @@ python -m torch.distributed.launch --master_port 5006 --nproc_per_node=1 $BASE_D
     --limit_examples 1000 \
     --job_id 49 \
     --learning_rate 1e-5 \
-    --prefix_input_type original \
-    --global_dense_feature_list none \
-    --specific_style_train -1 \
     --eval_frequency_min 10 \
     --negative_examples suffix \
     --prefix_truncate_dir both

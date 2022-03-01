@@ -146,14 +146,3 @@ def datum_to_dict(datum, tokenizer):
             negative_examples.append(negative_sent)
 
     return all_sents, negative_examples
-
-
-def update_config(args, config):
-    if args.global_dense_feature_list != "none":
-        global_dense_length = len(args.global_dense_feature_list.split(","))
-        logger.info("Using {:d} dense feature vectors.".format(global_dense_length))
-    else:
-        global_dense_length = 0
-
-    assert global_dense_length <= config["max_dense_length"]
-    config["global_dense_length"] = global_dense_length

@@ -38,9 +38,6 @@ python -m torch.distributed.launch --master_port 4999 --nproc_per_node=1 $BASE_D
     --per_gpu_train_batch_size 1 \
     --job_id 49 \
     --learning_rate 1e-5 \
-    --prefix_input_type original \
-    --global_dense_feature_list none \
-    --specific_style_train -1 \
     --optimizer adam \
     --negative_examples suffix \
     --prefix_truncate_dir both
