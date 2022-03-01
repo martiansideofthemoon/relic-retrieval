@@ -53,3 +53,6 @@ style-venv
 
 .vscode
 datasets/
+
+relic-venv
+relic_preprocessed

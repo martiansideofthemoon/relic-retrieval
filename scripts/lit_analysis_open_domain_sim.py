@@ -1,18 +1,13 @@
 import argparse
-import glob
 import json
 import numpy as np
 import tqdm
 import os
-import random
-import re
 import spacy
 import torch
 
-from retriever_train.inference_utils import PrefixSuffixWrapper
-from utils import execute_gpt2, cudafy_tokens, export_server, clean_token, pickle_dump, pickle_load, form_partitions, expand_prefix, build_lit_instance
+from utils import build_lit_instance
 from similarity.test_sim import encode_text
-from similarity.test_sim import model as sim_model
 
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"

@@ -10,7 +10,7 @@ import spacy
 import torch
 
 from retriever_train.inference_utils import PrefixSuffixWrapper
-from utils import execute_gpt2, cudafy_tokens, export_server, clean_token, pickle_dump, pickle_load, form_partitions, expand_prefix, build_lit_instance
+from utils import build_lit_instance
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 

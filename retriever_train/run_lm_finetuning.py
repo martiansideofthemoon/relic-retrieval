@@ -22,7 +22,7 @@ from args import get_parser
 from data_utils import MAX_ROBERTA_LENGTH
 from prefix_suffix_dataset import PrefixSuffixDataset
 from transformers import (
-    WEIGHTS_NAME, AdamW, RobertaConfig, RobertaModel, RobertaTokenizerFast, get_linear_schedule_with_warmup
+    AdamW, RobertaConfig, RobertaModel, RobertaTokenizerFast, get_linear_schedule_with_warmup
 )
 
 from utils import PrefixSuffixModel, init_parent_model

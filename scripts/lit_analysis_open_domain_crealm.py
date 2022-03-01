@@ -9,8 +9,7 @@ import re
 import spacy
 import torch
 
-from utils import execute_gpt2, cudafy_tokens, export_server, clean_token, pickle_dump, pickle_load, form_partitions, expand_prefix, build_lit_instance
-import collections as cll
+from utils import build_lit_instance
 import tensorflow as tf
 from tensor2tensor.data_generators import text_encoder
 import tensorflow_hub as hub
