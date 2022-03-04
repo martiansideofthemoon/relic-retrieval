@@ -53,7 +53,11 @@ You may need to make minor changes to [`retriever_train/run_finetune_gpt2_templa
 
 ## Evaluation
 
-(coming soon)
+It's best to run this on a GPU, since dense vectors need to be computed before retrieval takes place.
+
+```
+python scripts/lit_analysis_open_domain.py --split test --model retriever_train/saved_models/model_denserelic_4_4
+```
 
 ## Running Baselines (DPR, BM25, SIM, c-REALM, ColBERT)
 

@@ -9,7 +9,7 @@ from transformers import RobertaTokenizerFast
 from utils import pickle_dump, build_lit_instance
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--input_dir', default="/mnt/nfs/work1/miyyer/datasets/relic", type=str)
+parser.add_argument('--input_dir', default="data", type=str)
 parser.add_argument('--split', default="train", type=str)
 parser.add_argument('--output_dir', default="relic_preprocessed", type=str)
 parser.add_argument('--total', default=1, type=int)
@@ -19,9 +19,6 @@ parser.add_argument('--left_sents', default=4, type=int)
 parser.add_argument('--right_sents', default=4, type=int)
 parser.add_argument('--negative_examples', default=100, type=int)
 args = parser.parse_args()
-
-# mean sentence length in lit analysis is 31 tokens by roberta tokenizer
-# mean quote length from lit is 67 tokens by roberta tokenizer
 
 with open(f"{args.input_dir}/{args.split}.json", "r") as f:
     data = json.loads(f.read())
