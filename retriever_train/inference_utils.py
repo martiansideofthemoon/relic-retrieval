@@ -6,7 +6,7 @@ import numpy as np
 from transformers import RobertaModel, RobertaTokenizerFast
 
 from retriever_train.dataset_config import DATASET_CONFIG, BASE_CONFIG3
-from retriever_train.data_utils import update_config, Instance, get_label_dict
+from retriever_train.data_utils import Instance
 
 from retriever_train.utils import init_parent_model
 
@@ -26,7 +26,6 @@ class PrefixSuffixWrapper(object):
         else:
             self.config = BASE_CONFIG3
         print(self.config)
-        update_config(self.args, self.config)
 
         if not config_only:
             self.model, self.tokenizer = init_parent_model(checkpoint_dir=model_path,

@@ -16,7 +16,7 @@ nlp = spacy.load("en_core_web_sm", exclude=["parser"])
 nlp.enable_pipe("senter")
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--input_dir', default="/mnt/nfs/work1/miyyer/datasets/relic", type=str)
+parser.add_argument('--input_dir', default="data", type=str)
 parser.add_argument('--split', default="test", type=str)
 parser.add_argument('--model', default="retriever_train/saved_models/model_49", type=str)
 parser.add_argument('--total', default=1, type=int)
