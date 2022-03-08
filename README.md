@@ -25,7 +25,8 @@ pip install --editable .
 It's best to run this on a GPU, since dense vectors need to be computed before retrieval takes place.
 
 ```
-python scripts/relic_evaluation.py --split test --model retriever_train/saved_models/model_denserelic_4_4
+# remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
+python scripts/relic_evaluation.py --split test --model retriever_train/saved_models/model_denserelic_4_4 --write_to_file
 ```
 
 ## Training dense-ReLIC
@@ -96,11 +97,26 @@ This script exports checkpoints to [`retriever_train/saved_models/model_X`](retr
 
 Additional libraries will be needed to run the baseline retrievers.
 
+1. **SIM** --- A semantic similarity model from [Wieting et al. 2019](https://aclanthology.org/P19-1427) trained on STS data.
+
 ```
-### for SIM
 pip install nltk
 pip install sentencepiece
 
+# remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
+python scripts/relic_evaluation_sim.py --left_sents 1 --right_sents 1 --write_to_file
+```
+
+2. **DPR** --- A retriever from [Dense Passage Retrieval for Open-Domain Question Answering](https://aclanthology.org/2020.emnlp-main.550) trained on [Natural Questions](https://ai.google.com/research/NaturalQuestions) data.
+
+```
+# remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
+python scripts/relic_evaluation_dpr.py --left_sents 1 --right_sents 1 --write_to_file
+```
+
+3. **c-REALM** --- A retriever from [Krishna et al. 2021](https://aclanthology.org/2021.naacl-main.393) based on [REALM](https://arxiv.org/abs/2002.08909) trained on ELI5 data.
+
+```
 ### for c-REALM
 # TF 2.3 is the version compatible with CUDA 10.1
 # See https://www.tensorflow.org/install/source#gpu for TF-CUDA mapping
@@ -112,6 +128,9 @@ wget https://storage.googleapis.com/rt-checkpoint/retriever.zip
 unzip retriever.zip && rm retriever.zip
 mv retriever crealm-retriever
 rm -rf crealm-retriever/encoded_*
+
+# remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
+python scripts/relic_evaluation_crealm.py --left_sents 1 --right_sents 1 --write_to_file
 ```
 
 ## Citation

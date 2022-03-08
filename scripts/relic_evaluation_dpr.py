@@ -14,20 +14,20 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 parser = argparse.ArgumentParser()
 parser.add_argument('--input_dir', default="RELiC", type=str)
 parser.add_argument('--split', default="test", type=str)
-parser.add_argument('--model', default="retriever_train/saved_models/model_49", type=str)
 parser.add_argument('--total', default=1, type=int)
 parser.add_argument('--local_rank', default=0, type=int)
 parser.add_argument('--left_sents', default=4, type=int)
 parser.add_argument('--right_sents', default=4, type=int)
-parser.add_argument('--output_dir', default=None, type=str)
+parser.add_argument('--output_dir', default="retriever_train/saved_models/dpr_model", type=str)
+parser.add_argument('--write_to_file', action='store_true')
 args = parser.parse_args()
 
-if args.output_dir is None:
-    args.output_dir = args.model
+os.makedirs(args.output_dir, exist_ok=True)
 
-if os.path.exists(f"{args.model}/{args.split}_with_ranks_dpr_left_{args.left_sents}_right_{args.right_sents}.json"):
+
+if os.path.exists(f"{args.output_dir}/{args.split}_with_ranks_dpr_left_{args.left_sents}_right_{args.right_sents}.json"):
     load_existing = True
-    with open(f"{args.model}/{args.split}_with_ranks_dpr_left_{args.left_sents}_right_{args.right_sents}.json", "r") as f:
+    with open(f"{args.output_dir}/{args.split}_with_ranks_dpr_left_{args.left_sents}_right_{args.right_sents}.json", "r") as f:
         data = json.loads(f.read())
 else:
     load_existing = False
@@ -123,7 +123,8 @@ for book_title, book_data in data.items():
         if not load_existing:
             with torch.no_grad():
                 similarities = torch.matmul(all_prefices[ns], all_suffixes[ns].t())
-                sorted_scores = torch.argsort(similarities, dim=1, descending=True)
+                sorted_scores = torch.sort(similarities, dim=1, descending=True)
+                sorted_score_idx, sorted_score_vals = sorted_scores.indices, sorted_scores.values
 
         ranks = []
         for qnum, (quote, context) in enumerate(all_quotes_len_dict[ns]):
@@ -137,11 +138,11 @@ for book_title, book_data in data.items():
                 pass
             # get final rank by looking up rank list
             if load_existing:
-                ranks.append(quote[-3])
+                ranks.append(quote[-4])
             else:
-                gold_rank = sorted_scores[qnum].tolist().index(gold_candidate_index) + 1
+                gold_rank = sorted_score_idx[qnum].tolist().index(gold_candidate_index) + 1
                 ranks.append(gold_rank)
-                quote.extend([gold_rank, gold_candidate_index, sorted_scores[qnum].cpu().tolist()])
+                quote.extend([gold_rank, gold_candidate_index, sorted_score_idx[qnum].cpu().tolist(), sorted_score_vals[qnum].cpu().tolist()])
 
         results[ns]["mean_rank"].extend(ranks)
         results[ns]["recall@1"].extend([x <= 1 for x in ranks])
@@ -170,6 +171,6 @@ for book_title, book_data in data.items():
         )
     print("")
 
-if not load_existing:
+if not load_existing and args.write_to_file:
     with open(f"{args.output_dir}/{args.split}_with_ranks_dpr_left_{args.left_sents}_right_{args.right_sents}.json", "w") as f:
         f.write(json.dumps(data))
