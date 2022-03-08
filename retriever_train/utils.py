@@ -8,12 +8,6 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-def class_number_to_str(eval_dataset, class_number):
-    if isinstance(class_number, str):
-        return ", ".join(["{} {}".format(x.split("-")[0], x.split("-")[1]) for x in class_number.split("_")])
-    else:
-        return eval_dataset.reverse_label_dict[class_number.item()]
-
 def recall(sentence, srl_string):
     matches = 0
     for word in sentence.split():
@@ -181,7 +175,6 @@ class PrefixSuffixModel(nn.Module):
             }
 
         return results
-
 
     def get_vectors(self, batch, vectors_type="prefix"):
         args = self.args

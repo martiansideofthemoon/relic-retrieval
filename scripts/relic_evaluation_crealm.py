@@ -6,7 +6,6 @@ import tqdm
 import os
 import random
 import re
-import spacy
 import torch
 
 from utils import build_lit_instance
@@ -18,13 +17,10 @@ from transformers import AutoTokenizer
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-nlp = spacy.load("en_core_web_sm", exclude=["parser"])
-nlp.enable_pipe("senter")
-
 parser = argparse.ArgumentParser()
-parser.add_argument('--input_dir', default="/mnt/nfs/work1/miyyer/datasets/relic", type=str)
+parser.add_argument('--input_dir', default="data", type=str)
 parser.add_argument('--split', default="test", type=str)
-parser.add_argument('--model', default="retriever_train/saved_models/model_49", type=str)
+parser.add_argument('--model', default="routing_transformer/models/retriever", type=str)
 parser.add_argument('--total', default=1, type=int)
 parser.add_argument('--local_rank', default=0, type=int)
 parser.add_argument('--left_sents', default=4, type=int)
@@ -44,7 +40,7 @@ else:
     with open(f"{args.input_dir}/{args.split}.json", "r") as f:
         data = json.loads(f.read())
 
-retriever = hub.KerasLayer("routing_transformer/models/retriever", signature="encode_candidates", signature_outputs_as_dict=True)
+retriever = hub.KerasLayer(args.model, signature="encode_candidates", signature_outputs_as_dict=True)
 bert_tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 
 BATCH_SIZE = 100
@@ -70,13 +66,13 @@ all_candidate_lens = []
 candidate_length = []
 
 for book_title, book_data in data.items():
-    all_quotes = [v for k, v in book_data[0]["quotes"].items()]
-    all_sentences = book_data[1]["sentences"]
+    all_quotes = [v for k, v in book_data["quotes"].items()]
+    all_sentences = book_data["sentences"]
 
     # First, encode all the candidates which will be passed through suffix encoder
     candidates = {}
     for ns in range(1, NUM_SENTS):
-        candidates[ns] = [" ".join(all_sentences[idx:idx + ns]) for idx in book_data[2]["candidates"][f"{ns}_sentence"]]
+        candidates[ns] = [" ".join([x.strip() for x in all_sentences[idx:idx + ns]]) for idx in book_data["candidates"][f"{ns}_sentence"]]
 
     all_suffixes = {}
     for ns, cands in tqdm.tqdm(candidates.items(), desc="Encoding suffixes...", total=NUM_SENTS - 1):
@@ -106,7 +102,7 @@ for book_title, book_data in data.items():
     # break up data by sentence length
     all_quotes_len_dict = {k: [] for k in range(1, NUM_SENTS)}
     for aq, amq in zip(all_quotes, all_masked_quotes):
-        all_quotes_len_dict[aq[3]].append([aq, amq])
+        all_quotes_len_dict[aq[2]].append([aq, amq])
 
     # encode the prefixes using the prefix encoder
     all_prefices = {}
@@ -151,11 +147,11 @@ for book_title, book_data in data.items():
 
         ranks = []
         for qnum, (quote, context) in enumerate(all_quotes_len_dict[ns]):
-            assert ns == quote[3]
+            assert ns == quote[2]
             # map the gold quote to the position in candidate list
-            gold_answer = quote[2]
+            gold_answer = quote[1]
             try:
-                gold_candidate_index = book_data[2]["candidates"][f"{ns}_sentence"].index(gold_answer)
+                gold_candidate_index = book_data["candidates"][f"{ns}_sentence"].index(gold_answer)
             except:
                 import pdb; pdb.set_trace()
                 pass
@@ -175,7 +171,7 @@ for book_title, book_data in data.items():
         results[ns]["recall@50"].extend([x <= 50 for x in ranks])
         results[ns]["recall@100"].extend([x <= 100 for x in ranks])
         results[ns]["recall@1650"].extend([x <= 1650 for x in ranks])
-        num_cands = len(book_data[2]["candidates"][f"{ns}_sentence"])
+        num_cands = len(book_data["candidates"][f"{ns}_sentence"])
         results[ns]["num_candidates"].extend([num_cands for _ in ranks])
 
         print(f"\nResults with {ns} sentence quotes ({len(results[ns]['mean_rank'])} instances):")

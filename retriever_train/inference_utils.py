@@ -5,7 +5,7 @@ import numpy as np
 
 from transformers import RobertaModel, RobertaTokenizerFast
 
-from retriever_train.dataset_config import DATASET_CONFIG, BASE_CONFIG3
+from retriever_train.dataset_config import DATASET_CONFIG, BASE_CONFIG
 from retriever_train.data_utils import Instance
 
 from retriever_train.utils import init_parent_model
@@ -24,14 +24,14 @@ class PrefixSuffixWrapper(object):
         if self.args.data_dir in DATASET_CONFIG:
             self.config = DATASET_CONFIG[self.args.data_dir]
         else:
-            self.config = BASE_CONFIG3
+            self.config = BASE_CONFIG
         print(self.config)
 
         if not config_only:
             self.model, self.tokenizer = init_parent_model(checkpoint_dir=model_path,
-                                                        args=self.args,
-                                                        model_class=RobertaModel,
-                                                        tokenizer_class=RobertaTokenizerFast)
+                                                           args=self.args,
+                                                           model_class=RobertaModel,
+                                                           tokenizer_class=RobertaTokenizerFast)
 
     def preprocess_sentences(self, contexts, vectors_type="prefix"):
         args = self.args

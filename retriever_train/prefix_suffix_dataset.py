@@ -16,7 +16,7 @@ from data_utils import (
     limit_dataset_size
 )
 from dataset_config import (
-    BASE_CONFIG3,
+    BASE_CONFIG,
     DATASET_CONFIG
 )
 
@@ -31,7 +31,7 @@ class PrefixSuffixDataset(Dataset):
         if data_dir in DATASET_CONFIG:
             self.config = DATASET_CONFIG[data_dir]
         else:
-            self.config = BASE_CONFIG3
+            self.config = BASE_CONFIG
 
         logger.info(self.config)
 

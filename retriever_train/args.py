@@ -41,7 +41,7 @@ def get_parser(parser_type, model_classes=None, all_models=None):
         parser.add_argument("--do_train", action='store_true',
                             help="Whether to run training.")
         parser.add_argument("--do_eval", action='store_true',
-                            help="Whether to run eval on the dev set.")
+                            help="Whether to run eval on the validation set.")
         parser.add_argument("--do_delete_old", action='store_true',
                             help="Whether to delete the older checkpoints based on perplexity.")
         parser.add_argument("--evaluate_during_training", action='store_true',
@@ -92,7 +92,7 @@ def get_parser(parser_type, model_classes=None, all_models=None):
         parser.add_argument("--model_name_or_path", default=None, type=str, required=True,
                             help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(all_models))
         parser.add_argument("--generation_output_dir", type=str, default="")
-        parser.add_argument("--eval_split", type=str, default="dev")
+        parser.add_argument("--eval_split", type=str, default="val")
         parser.add_argument("--length", type=int, default=-1)
         parser.add_argument("--num_samples", type=int, default=1)
         parser.add_argument("--temperature", type=float, default=1.0,

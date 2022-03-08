@@ -57,3 +57,4 @@ datasets/
 relic-venv
 relic_preprocessed
 data
+scripts/clean.sh

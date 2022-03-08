@@ -1,10 +1,11 @@
 import collections
 import datetime
 import itertools
+import random
 import os
 import subprocess
 
-from hyperparameters_config import tables, lit_analysis
+from hyperparameters_config import lit_analysis_both, lit_analysis_left, lit_analysis_right
 
 
 class SafeDict(dict):
@@ -32,7 +33,7 @@ other_dependencies = {
 
 
 top_details = "RoBERTa-base retriever on new RELIC dataset 4/4."
-hyperparameters = lit_analysis
+hyperparameters = lit_analysis_both
 
 run_id = int(get_run_id())
 key_hyperparameters = [x[0] for x in hyperparameters]
@@ -46,12 +47,12 @@ for combo in combinations:
     # Write the scheduler scripts
     with open("retriever_train/run_finetune_gpt2_template.sh", 'r') as f:
         schedule_script = f.read()
-    with open("retriever_train/run_generation_gpt2_template.sh", 'r') as f:
-        generation_script = f.read()
     with open("retriever_train/run_evaluate_gpt2_template.sh", 'r') as f:
         evaluate_script = f.read()
 
     combo = {k[0]: v for (k, v) in zip(key_hyperparameters, combo)}
+    combo["master_port"] = random.randint(4000, 7000)
+    combo["master_port_eval"] = random.randint(4000, 7000)
 
     for k, v in other_dependencies.items():
         combo[k] = v(combo)

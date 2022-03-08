@@ -20,7 +20,7 @@ from tqdm import tqdm, trange
 from args import get_parser
 from prefix_suffix_dataset import PrefixSuffixDataset
 from transformers import (
-    AdamW, RobertaConfig, RobertaModel, RobertaTokenizerFast, get_linear_schedule_with_warmup
+    RobertaConfig, RobertaModel, RobertaTokenizerFast, get_linear_schedule_with_warmup
 )
 
 from utils import PrefixSuffixModel, init_parent_model
@@ -40,7 +40,7 @@ def load_and_cache_examples(args, tokenizer, evaluate=False):
         tokenizer=tokenizer,
         args=args,
         evaluate=evaluate,
-        split="dev" if evaluate else "train"
+        split="val" if evaluate else "train"
     )
     return dataset
 
@@ -145,9 +145,9 @@ def train(args, parent_model, train_dataset, tokenizer):
             'weight_decay': 0.0
         }
     ]
-    optimizer = AdamW(grouped_parameters,
-                      lr=float(args.learning_rate),
-                      eps=args.adam_epsilon)
+    optimizer = torch.optim.AdamW(grouped_parameters,
+                                  lr=float(args.learning_rate),
+                                  eps=args.adam_epsilon)
     scheduler = get_linear_schedule_with_warmup(optimizer,
                                                 num_warmup_steps=args.warmup_steps,
                                                 num_training_steps=t_total)
@@ -166,8 +166,7 @@ def train(args, parent_model, train_dataset, tokenizer):
     # Distributed training (should be after apex fp16 initialization)
     if args.local_rank != -1:
         model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank],
-                                                          output_device=args.local_rank,
-                                                          find_unused_parameters=True)
+                                                          output_device=args.local_rank)
 
     # Train!
     logger.info("***** Running training *****")
@@ -312,10 +311,10 @@ def evaluate(args, parent_model, tokenizer, prefix=""):
     output_eval_file = os.path.join(eval_output_dir, prefix, "eval_results.txt")
     with open(output_eval_file, "w") as writer:
         logger.info("***** Eval results {} *****".format(prefix))
+        logger.info("WARNING --- don't report these numbers in a paper, this script is for early stopping only! Use scripts/relic_evaluation.py instead, see README for instructions.")
         for key in sorted(results.keys()):
             logger.info("  %s = %s", key, str(results[key]))
             writer.write("%s = %s\n" % (key, str(results[key])))
-
     return results
 
 
@@ -469,6 +468,8 @@ def main():
                 ["{} = {:.4f} loss, {:.4f} accuracy, {:.4f} mean rank, {:.4f} R@1, {:.4f} R@3, {:.4f} R@5, {:.4f} R@10".format(x[0], *x[1]) for x in sorted_results]
             )
             logger.info("Top checkpoints:\n{}".format(sorted_results_summary))
+            if sorted_results_summary.strip():
+                logger.info("WARNING --- don't report these numbers in a paper, this script is for early stopping only! Use scripts/relic_evaluation.py instead, see README for instructions.")
 
             if args.eval_frequency_min == 0 or args.evaluate_specific or patience > args.eval_patience:
                 eval_done = True
