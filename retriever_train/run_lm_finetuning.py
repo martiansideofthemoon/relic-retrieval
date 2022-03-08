@@ -229,7 +229,7 @@ def train(args, parent_model, train_dataset, tokenizer):
                         for key, value in results.items():
                             tb_writer.add_scalar('eval_{}'.format(key), value, global_step)
 
-                    tb_writer.add_scalar('learning_rate', scheduler.get_lr()[0], global_step)
+                    tb_writer.add_scalar('learning_rate', scheduler.get_last_lr()[0], global_step)
 
                     for metric_type, metric_vals in loss_metrics.items():
                         tb_writer.add_scalar(
@@ -321,6 +321,7 @@ def evaluate(args, parent_model, tokenizer, prefix=""):
 def main():
     parser = get_parser("finetuning")
     args = parser.parse_args()
+    args.local_rank = int(os.environ["LOCAL_RANK"])
 
     if (os.path.exists(args.output_dir) and os.listdir(args.output_dir) and args.do_train and not args.overwrite_output_dir):
         raise ValueError("Output directory ({}) already exists and is not empty. Use --overwrite_output_dir to overcome.".format(args.output_dir))

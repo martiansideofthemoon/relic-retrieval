@@ -18,9 +18,9 @@ from transformers import AutoTokenizer
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--input_dir', default="data", type=str)
+parser.add_argument('--input_dir', default="RELiC", type=str)
 parser.add_argument('--split', default="test", type=str)
-parser.add_argument('--model', default="routing_transformer/models/retriever", type=str)
+parser.add_argument('--model', default="crealm-retriever", type=str)
 parser.add_argument('--total', default=1, type=int)
 parser.add_argument('--local_rank', default=0, type=int)
 parser.add_argument('--left_sents', default=4, type=int)

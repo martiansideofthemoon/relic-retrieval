@@ -8,7 +8,7 @@ import tqdm
 from utils import pickle_dump, build_lit_instance
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--input_dir", default="data", type=str)
+parser.add_argument("--input_dir", default="RELiC", type=str)
 parser.add_argument("--output_dir", default="relic_preprocessed", type=str)
 parser.add_argument("--augmentations", default=1, type=int)
 parser.add_argument("--left_sents", default=4, type=int)
@@ -21,11 +21,11 @@ for split in ["train", "val", "test"]:
     with open(f"{args.input_dir}/{split}.json", "r") as f:
         data = json.loads(f.read())
 
+    num_quotes = sum([len(book_data["quotes"]) for book_data in data.values()])
+    print(f"Total {split} instances = {num_quotes}")
     dataset = []
     book_names = [k for k in data.keys()]
 
-    import pdb; pdb.set_trace()
-    pass
     for book_title, book_data in data.items():
         all_sents = book_data["sentences"]
         all_quotes = [v for k, v in book_data["quotes"].items()]

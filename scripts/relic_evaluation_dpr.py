@@ -12,7 +12,7 @@ from transformers import AutoTokenizer, DPRContextEncoder
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--input_dir', default="data", type=str)
+parser.add_argument('--input_dir', default="RELiC", type=str)
 parser.add_argument('--split', default="test", type=str)
 parser.add_argument('--model', default="retriever_train/saved_models/model_49", type=str)
 parser.add_argument('--total', default=1, type=int)

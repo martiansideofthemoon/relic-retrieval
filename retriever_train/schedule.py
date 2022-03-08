@@ -28,12 +28,13 @@ def get_run_id():
 
 other_dependencies = {
     "memory": lambda x: int(x["ngpus"]) * 50 if x["gpu"] in ["m40", "titanx"] else int(x["ngpus"]) * 45,
-    "cpus": lambda x: int(x["ngpus"]) * 3
+    "cpus": lambda x: int(x["ngpus"]) * 3,
+    "time": lambda x: "4" if "short" in x["gpu"] else "167"
 }
 
 
-top_details = "RoBERTa-base retriever on new RELIC dataset 4/4."
-hyperparameters = lit_analysis_both
+top_details = "RoBERTa-base retriever on new RELIC dataset 0/1."
+hyperparameters = lit_analysis_right
 
 run_id = int(get_run_id())
 key_hyperparameters = [x[0] for x in hyperparameters]

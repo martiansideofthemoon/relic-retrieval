@@ -52,9 +52,11 @@ docs/_build/
 style-venv
 
 .vscode
-datasets/
+datasets
 
 relic-venv
 relic_preprocessed
 data
 scripts/clean.sh
+crealm-retriever
+RELiC

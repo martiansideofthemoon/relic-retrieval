@@ -15,7 +15,7 @@ BASE_DIR=retriever_train
 
 echo $HOSTNAME
 
-python -m torch.distributed.launch --master_port 4999 --nproc_per_node=1 $BASE_DIR/run_lm_finetuning.py \
+torchrun --master_port 4999 --nproc_per_node=1 $BASE_DIR/run_lm_finetuning.py \
     --output_dir=$BASE_DIR/saved_models/model_4_4 \
     --model_type=roberta \
     --model_name_or_path=roberta-base \

@@ -18,7 +18,7 @@ BASE_DIR=retriever_train
 
 # WARNING --- don't report these numbers in a paper, this script is for early stopping only! Use scripts/relic_evaluation.py instead, see README for instructions.
 
-python -m torch.distributed.launch --master_port {master_port_eval} --nproc_per_node=1 $BASE_DIR/run_lm_finetuning.py \
+torchrun --master_port {master_port_eval} --nproc_per_node=1 $BASE_DIR/run_lm_finetuning.py \
     --output_dir=$BASE_DIR/saved_models/model_{job_id} \
     --model_type=roberta \
     --model_name_or_path={model_name} \

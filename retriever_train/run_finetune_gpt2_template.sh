@@ -1,7 +1,7 @@
 #!/bin/sh
 #SBATCH --job-name=finetune_retriever_{job_id}
 #SBATCH -o retriever_train/logs/log_{job_id}.txt
-#SBATCH --time=4:00:00
+#SBATCH --time={time}:00:00
 #SBATCH --partition={gpu}
 #SBATCH --gres=gpu:{ngpus}
 #SBATCH --cpus-per-task={cpus}
@@ -23,7 +23,7 @@ cp $BASE_DIR/*.py $BASE_DIR/saved_models/model_{job_id}_code
 
 echo $HOSTNAME
 
-python -m torch.distributed.launch --master_port {master_port} --nproc_per_node={ngpus} $BASE_DIR/run_lm_finetuning.py \
+torchrun --master_port {master_port} --nproc_per_node={ngpus} $BASE_DIR/run_lm_finetuning.py \
     --output_dir=$BASE_DIR/saved_models/model_{job_id} \
     --model_type=roberta \
     --model_name_or_path={model_name} \

@@ -28,34 +28,19 @@ It's best to run this on a GPU, since dense vectors need to be computed before r
 python scripts/relic_evaluation.py --split test --model retriever_train/saved_models/model_denserelic_4_4
 ```
 
-### Running Baselines (DPR, BM25, SIM, c-REALM, ColBERT)
-
-Additional libraries will be needed to run the baseline retrievers.
-
-```
-# for SIM
-pip install nltk
-pip install sentencepiece
-
-# for c-REALM
-
-```
-
-For c-REALM, download the checkpoint from [here](https://storage.googleapis.com/rt-checkpoint/retriever.zip).
-
 ## Training dense-ReLIC
 
 ### Preprocess Dataset
 
-Download the dataset from [this link](https://drive.google.com/drive/folders/1A-UhzFdeLiEuTa6cvwSmHKMc1gSBvEGB?usp=sharing), and place the files inside the `data` folder. Your `data` folder should look like,
+Download the dataset from [this link](https://drive.google.com/drive/folders/1A-UhzFdeLiEuTa6cvwSmHKMc1gSBvEGB?usp=sharing). Your `RELiC` folder should look like,
 
 ```
-(relic-venv) kalpesh@node187:relic-retrieval$ ls data/
+(relic-venv) kalpesh@node187:relic-retrieval$ ls RELiC/
 test.json  train.json  val.json
 (relic-venv) kalpesh@node187:relic-retrieval$
 ```
 
-Next, run the following preprocessing script (adjust the `left_sents` / `right_sents` flags for shorter contexts):
+Next, run the following preprocessing script (adjust the `--left_sents` / `--right_sents` flags for shorter contexts):
 
 ```
 python scripts/preprocess_lit_analysis_data.py --left_sents 4 --right_sents 4
@@ -76,11 +61,11 @@ bash retriever_train/examples/schedule.sh
 
 # in terminal 2
 # you may need to run "export CUDA_VISIBLE_DEVICES=1" to use GPU-1
-# this script is used for early stopping checkpoints, it is not a precise evaluation. See section on evaluation for precise evaluation.
+# this script is used for early stopping checkpoints, it is not a precise evaluation.
 bash retriever_train/examples/evaluate.sh
 ```
 
-2. (recommended) If you have a SLURM setup, you can configure model hyperparameters using [`retriever_train/hyperparameter_config.py`](retriever_train/hyperparameter_config.py) (which supports grid search too) and then run,
+2. If you have a SLURM setup, you can configure model hyperparameters using [`retriever_train/hyperparameter_config.py`](retriever_train/hyperparameter_config.py) (which supports grid search too) and then run,
 
 ```
 python retriever_train/schedule.py
@@ -107,3 +92,37 @@ This script exports checkpoints to [`retriever_train/saved_models/model_X`](retr
 
 *NOTE*: You may need to make minor changes to [`retriever_train/run_finetune_gpt2_template.sh`](retriever_train/run_finetune_gpt2_template.sh), [`retriever_train/run_evaluate_gpt2_template.sh`](retriever_train/run_evaluate_gpt2_template.sh) and [`retriever_train/schedule.py`](retriever_train/schedule.py) to make them compatible with your SLURM setup.
 
+## Running Baselines (DPR, SIM, c-REALM)
+
+Additional libraries will be needed to run the baseline retrievers.
+
+```
+### for SIM
+pip install nltk
+pip install sentencepiece
+
+### for c-REALM
+# TF 2.3 is the version compatible with CUDA 10.1
+# See https://www.tensorflow.org/install/source#gpu for TF-CUDA mapping
+pip install tensorflow==2.3
+pip install tensor2tensor
+
+# Download and unzip the c-REALM checkpoint
+wget https://storage.googleapis.com/rt-checkpoint/retriever.zip
+unzip retriever.zip && rm retriever.zip
+mv retriever crealm-retriever
+rm -rf crealm-retriever/encoded_*
+```
+
+## Citation
+
+If you found our paper or this repository useful, please cite:
+
+```
+@inproceedings{relic22,
+author={Katherine Thai and Yapei Chang and Kalpesh Krishna and Mohit Iyyer},
+Booktitle = {Association of Computational Linguistics},
+Year = "2022",
+Title={RELiC: Retrieving Evidence for Literary Claims},
+}
+```

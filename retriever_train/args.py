@@ -9,8 +9,6 @@ def get_parser(parser_type, model_classes=None, all_models=None):
                         help="The input dataset directory.")
     parser.add_argument("--no_cuda", action='store_true',
                         help="Avoid using CUDA when available")
-    parser.add_argument("--local_rank", type=int, default=-1,
-                        help="For distributed training: local_rank")
     parser.add_argument('--seed', type=int, default=42,
                         help="random seed for initialization")
     parser.add_argument("--per_gpu_eval_batch_size", default=1, type=int,
@@ -94,13 +92,4 @@ def get_parser(parser_type, model_classes=None, all_models=None):
         parser.add_argument("--generation_output_dir", type=str, default="")
         parser.add_argument("--eval_split", type=str, default="val")
         parser.add_argument("--length", type=int, default=-1)
-        parser.add_argument("--num_samples", type=int, default=1)
-        parser.add_argument("--temperature", type=float, default=1.0,
-                            help="temperature of 0 implies greedy sampling")
-        parser.add_argument("--top_k", type=int, default=0)
-        parser.add_argument("--beam_size", type=int, default=1)
-        parser.add_argument("--top_p", type=float, default=0.9)
-        parser.add_argument("--beam_search_scoring", type=str, default="normalize")
-        parser.add_argument('--stop_token', type=str, default=None,
-                            help="Token at which text generation is stopped")
     return parser

@@ -17,7 +17,7 @@ echo $HOSTNAME
 
 # WARNING --- don't report these numbers in a paper, this script is for early stopping only! Use scripts/relic_evaluation.py instead, see README for instructions.
 
-python -m torch.distributed.launch --master_port 5006 --nproc_per_node=1 $BASE_DIR/run_lm_finetuning.py \
+torchrun --master_port 5006 --nproc_per_node=1 $BASE_DIR/run_lm_finetuning.py \
     --output_dir=$BASE_DIR/saved_models/model_4_4 \
     --model_type=roberta \
     --model_name_or_path=roberta-base \
