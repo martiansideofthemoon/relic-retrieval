@@ -24,9 +24,9 @@ args = parser.parse_args()
 if args.output_dir is None:
     args.output_dir = args.model
 
-if os.path.exists(f"{args.model}/{args.split}_new2_with_ranks.json"):
+if os.path.exists(f"{args.model}/{args.split}_with_ranks.json"):
     load_existing = True
-    with open(f"{args.model}/{args.split}_new2_with_ranks.json", "r") as f:
+    with open(f"{args.model}/{args.split}_with_ranks.json", "r") as f:
         data = json.loads(f.read())
 else:
     load_existing = False
@@ -173,5 +173,5 @@ for book_title, book_data in data.items():
     print("")
 
 if not load_existing and args.write_to_file:
-    with open(f"{args.output_dir}/{args.split}_new_with_ranks.json", "w") as f:
+    with open(f"{args.output_dir}/{args.split}_with_ranks.json", "w") as f:
         f.write(json.dumps(data))

@@ -17,8 +17,9 @@ pip install --editable .
 
 ## Pretrained dense-ReLIC models
 
-(coming soon)
-
+| Model                                   | Google Drive link |
+|-----------------------------------------|-------------------|
+| dense-RELiC (4 left, 4 right sentences) | [link](https://drive.google.com/drive/folders/1Y2PxHRycWucQtQCbw5OxN8eQMEZtS43h?usp=sharing)              |
 
 ## Evaluation
 
@@ -26,7 +27,9 @@ It's best to run this on a GPU, since dense vectors need to be computed before r
 
 ```
 # remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
-python scripts/relic_evaluation.py --split test --model retriever_train/saved_models/model_denserelic_4_4 --write_to_file
+python scripts/relic_evaluation.py \
+    --model retriever_train/saved_models/model_denserelic_4_4 \
+    --write_to_file
 ```
 
 ## Training dense-ReLIC
@@ -104,14 +107,18 @@ pip install nltk
 pip install sentencepiece
 
 # remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
-python scripts/relic_evaluation_sim.py --left_sents 1 --right_sents 1 --write_to_file
+python scripts/relic_evaluation_sim.py \
+    --left_sents 1 --right_sents 1 \
+    --write_to_file
 ```
 
-2. **DPR** --- A retriever from [Dense Passage Retrieval for Open-Domain Question Answering](https://aclanthology.org/2020.emnlp-main.550) trained on [Natural Questions](https://ai.google.com/research/NaturalQuestions) data.
+2. **DPR** --- A retriever from [Karphukin et al. 2020](https://aclanthology.org/2020.emnlp-main.550) trained on [Natural Questions](https://ai.google.com/research/NaturalQuestions) data.
 
 ```
 # remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
-python scripts/relic_evaluation_dpr.py --left_sents 1 --right_sents 1 --write_to_file
+python scripts/relic_evaluation_dpr.py \
+    --left_sents 1 --right_sents 1 \
+    --write_to_file
 ```
 
 3. **c-REALM** --- A retriever from [Krishna et al. 2021](https://aclanthology.org/2021.naacl-main.393) based on [REALM](https://arxiv.org/abs/2002.08909) trained on ELI5 data.
