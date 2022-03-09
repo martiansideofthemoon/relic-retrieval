@@ -21,7 +21,7 @@ All pretrained models can be found in the dataset Google Drive folder. Individua
 
 | Model                                   | Google Drive link |
 |-----------------------------------------|-------------------|
-| dense-RELiC (4 left, 4 right sentences) | [link](https://drive.google.com/drive/folders/1Y2PxHRycWucQtQCbw5OxN8eQMEZtS43h?usp=sharing)              |
+| **dense-RELiC (4 left, 4 right sentences)** | [link](https://drive.google.com/drive/folders/1Y2PxHRycWucQtQCbw5OxN8eQMEZtS43h?usp=sharing)              |
 | dense-RELiC (4 left, 0 right sentences) | [link](https://drive.google.com/drive/folders/1TfKMY-XZhI5IVXPpRZ59n3j2jiw_VQcH?usp=sharing)              |
 | dense-RELiC (0 left, 4 right sentences) | [link](https://drive.google.com/drive/folders/1fw9BRrNnU9TzkabBf7PUrWyzXQCqFrB0?usp=sharing)              |
 | dense-RELiC (1 left, 1 right sentence) | [link](https://drive.google.com/drive/folders/1GFgwXyEYg0IL5eYJ-sqg9Zm2hKTVXOFt?usp=sharing)              |
@@ -52,8 +52,7 @@ test.json  train.json  val.json
 Next, run the following preprocessing script (adjust the `--left_sents` / `--right_sents` flags for shorter contexts):
 
 ```
-python scripts/preprocess_lit_analysis_data.py \
-    --left_sents 4 --right_sents 4
+python scripts/preprocess_lit_analysis_data.py --left_sents 4 --right_sents 4
 ```
 
 ### Training and early stopping evaluation
