@@ -26,6 +26,7 @@ parser.add_argument('--local_rank', default=0, type=int)
 parser.add_argument('--left_sents', default=4, type=int)
 parser.add_argument('--right_sents', default=4, type=int)
 parser.add_argument('--output_dir', default=None, type=str)
+parser.add_argument('--write_to_file', action='store_true')
 args = parser.parse_args()
 
 if args.output_dir is None:
@@ -158,11 +159,11 @@ for book_title, book_data in data.items():
                 pass
             # get final rank by looking up rank list
             if load_existing:
-                ranks.append(quote[-3])
+                ranks.append(quote[-4])
             else:
                 gold_rank = sorted_scores[qnum].numpy().tolist().index(gold_candidate_index) + 1
                 ranks.append(gold_rank)
-                quote.extend([gold_rank, gold_candidate_index, sorted_scores[qnum].numpy().tolist()])
+                quote.extend([gold_rank, gold_candidate_index, sorted_scores[qnum].numpy().tolist(), sorted_score_vals[qnum].numpy().tolist()])
 
         results[ns]["mean_rank"].extend(ranks)
         results[ns]["recall@1"].extend([x <= 1 for x in ranks])
