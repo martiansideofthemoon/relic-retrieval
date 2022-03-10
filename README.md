@@ -147,7 +147,7 @@ python scripts/relic_evaluation_crealm.py \
     --write_to_file
 ```
 
-4. Random retrieval
+4. **Random retrieval**
 
 ```
 python scripts/relic_evaluation_random.py  --num_samples 100
