@@ -15,8 +15,6 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 parser = argparse.ArgumentParser()
 parser.add_argument('--input_dir', default="RELiC", type=str)
 parser.add_argument('--split', default="test", type=str)
-parser.add_argument('--total', default=1, type=int)
-parser.add_argument('--local_rank', default=0, type=int)
 parser.add_argument('--left_sents', default=4, type=int)
 parser.add_argument('--right_sents', default=4, type=int)
 parser.add_argument('--output_dir', default="retriever_train/saved_models/sim_model", type=str)
@@ -72,7 +70,7 @@ for book_title, book_data in data.items():
         # minibatching it to save GPU memory
         for inst_num in range(0, len(cands), BATCH_SIZE):
             # The API accepts raw strings and does the tokenization for you
-            with torch.no_grad():
+            with torch.inference_mode():
                 sim_tensors = encode_text(cands[inst_num:inst_num + BATCH_SIZE])
                 all_suffixes[ns].append(sim_tensors)
         all_suffixes[ns] = torch.cat(all_suffixes[ns], dim=0)
@@ -93,7 +91,7 @@ for book_title, book_data in data.items():
             continue
         # minibatching it to save GPU memory
         for inst_num in range(0, len(qts), BATCH_SIZE):
-            with torch.no_grad():
+            with torch.inference_mode():
                 sim_tensors = encode_text([x[1] for x in qts[inst_num:inst_num + BATCH_SIZE]])
                 all_prefices[ns].append(sim_tensors)
         if len(all_prefices[ns]) > 0:
@@ -114,7 +112,7 @@ for book_title, book_data in data.items():
         # compute inner product between all pairs of quotes and candidates of same number of sentences
         # also compute ranks of candidates using argsort
         if not load_existing:
-            with torch.no_grad():
+            with torch.inference_mode():
                 similarities = torch.matmul(all_prefices[ns], all_suffixes[ns].t())
                 vecs1_norm = torch.norm(all_prefices[ns], dim=1, keepdim=True)
                 vecs2_norm = torch.norm(all_suffixes[ns], dim=1, keepdim=True)

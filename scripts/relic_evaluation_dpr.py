@@ -14,8 +14,6 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 parser = argparse.ArgumentParser()
 parser.add_argument('--input_dir', default="RELiC", type=str)
 parser.add_argument('--split', default="test", type=str)
-parser.add_argument('--total', default=1, type=int)
-parser.add_argument('--local_rank', default=0, type=int)
 parser.add_argument('--left_sents', default=4, type=int)
 parser.add_argument('--right_sents', default=4, type=int)
 parser.add_argument('--output_dir', default="retriever_train/saved_models/dpr_model", type=str)
@@ -75,7 +73,7 @@ for book_title, book_data in data.items():
         # minibatching it to save GPU memory
         for inst_num in range(0, len(cands), BATCH_SIZE):
             # The API accepts raw strings and does the tokenization for you
-            with torch.no_grad():
+            with torch.inference_mode():
                 dpr_tensors = tokenizer(cands[inst_num:inst_num + BATCH_SIZE], return_tensors="pt", padding=True, truncation=True, max_length=512)
                 for k, v in dpr_tensors.items():
                     dpr_tensors[k] = v.cuda()
@@ -98,7 +96,7 @@ for book_title, book_data in data.items():
             continue
         # minibatching it to save GPU memory
         for inst_num in range(0, len(qts), BATCH_SIZE):
-            with torch.no_grad():
+            with torch.inference_mode():
                 dpr_tensors = tokenizer([x[1] for x in qts[inst_num:inst_num + BATCH_SIZE]], return_tensors="pt", padding=True, truncation=True, max_length=512)
                 for k, v in dpr_tensors.items():
                     dpr_tensors[k] = v.cuda()
@@ -121,7 +119,7 @@ for book_title, book_data in data.items():
         # compute inner product between all pairs of quotes and candidates of same number of sentences
         # also compute ranks of candidates using argsort
         if not load_existing:
-            with torch.no_grad():
+            with torch.inference_mode():
                 similarities = torch.matmul(all_prefices[ns], all_suffixes[ns].t())
                 sorted_scores = torch.sort(similarities, dim=1, descending=True)
                 sorted_score_idx, sorted_score_vals = sorted_scores.indices, sorted_scores.values

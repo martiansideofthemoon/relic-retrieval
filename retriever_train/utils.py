@@ -184,9 +184,9 @@ class PrefixSuffixModel(nn.Module):
             prefix_encoder.eval()
             prefices = batch["prefices"].to(args.device)
             prefix_masks = batch["prefix_masks"].to(args.device)
-            batch_size, num_pairs, prefix_seq_length = prefices.shape
+            _, _, prefix_seq_length = prefices.shape
 
-            with torch.no_grad():
+            with torch.inference_mode():
                 prefix_outs = prefix_encoder(
                     input_ids=prefices.reshape(-1, prefix_seq_length),
                     attention_mask=prefix_masks.reshape(-1, prefix_seq_length)
@@ -197,9 +197,9 @@ class PrefixSuffixModel(nn.Module):
             suffix_encoder.eval()
             suffices = batch["suffices"].to(args.device)
             suffix_masks = batch["suffix_masks"].to(args.device)
-            batch_size, num_pairs, suffix_seq_length = suffices.shape
+            _, _, suffix_seq_length = suffices.shape
 
-            with torch.no_grad():
+            with torch.inference_mode():
                 suffix_outs = suffix_encoder(
                     input_ids=suffices.reshape(-1, suffix_seq_length),
                     attention_mask=suffix_masks.reshape(-1, suffix_seq_length)

@@ -26,7 +26,7 @@ def make_example(sentence, model):
     return wp1
 
 def find_similarity(s1, s2):
-    with torch.no_grad():
+    with torch.inference_mode():
         s1 = [make_example(x, model) for x in s1]
         s2 = [make_example(x, model) for x in s2]
         wx1, wl1, wm1 = model.torchify_batch(s1)
@@ -35,7 +35,7 @@ def find_similarity(s1, s2):
         return [x.item() for x in scores]
 
 def find_similarity_matrix(s1, s2):
-    with torch.no_grad():
+    with torch.inference_mode():
         s1 = [make_example(x, model) for x in s1]
         s2 = [make_example(x, model) for x in s2]
         wx1, wl1, wm1 = model.torchify_batch(s1)
@@ -50,7 +50,7 @@ def find_similarity_matrix(s1, s2):
     return torch.divide(dot_product, norm_product)
 
 def encode_text(s1):
-    with torch.no_grad():
+    with torch.inference_mode():
         s1 = [make_example(x, model) for x in s1]
         wx1, wl1, wm1 = model.torchify_batch(s1)
         vecs1 = model.encode(idxs=wx1, mask=wm1, lengths=wl1)

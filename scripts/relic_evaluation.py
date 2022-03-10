@@ -15,8 +15,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--input_dir', default="RELiC", type=str)
 parser.add_argument('--split', default="test", type=str)
 parser.add_argument('--model', default="retriever_train/saved_models/model_0", type=str)
-parser.add_argument('--total', default=1, type=int)
-parser.add_argument('--local_rank', default=0, type=int)
 parser.add_argument('--output_dir', default=None, type=str)
 parser.add_argument('--write_to_file', action='store_true')
 args = parser.parse_args()
@@ -122,7 +120,7 @@ for book_title, book_data in data.items():
         # compute inner product between all pairs of quotes and candidates of same number of sentences
         # also compute ranks of candidates using argsort
         if not load_existing:
-            with torch.no_grad():
+            with torch.inference_mode():
                 similarities = torch.matmul(all_prefices[ns], all_suffixes[ns].t())
                 sorted_scores = torch.sort(similarities, dim=1, descending=True)
                 sorted_score_idx, sorted_score_vals = sorted_scores.indices, sorted_scores.values
