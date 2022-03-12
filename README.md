@@ -15,6 +15,14 @@ pip install tensorboardX
 pip install --editable .
 ```
 
+**Download the dataset** from [this link](https://drive.google.com/drive/folders/1A-UhzFdeLiEuTa6cvwSmHKMc1gSBvEGB?usp=sharing). Your `RELiC` folder should look like,
+
+```
+(relic-venv) kalpesh@node187:relic-retrieval$ ls RELiC/
+test.json  train.json  val.json
+(relic-venv) kalpesh@node187:relic-retrieval$
+```
+
 ## Pretrained dense-ReLIC models
 
 All pretrained models can be found in the dataset Google Drive [folder](https://drive.google.com/drive/folders/1A-UhzFdeLiEuTa6cvwSmHKMc1gSBvEGB?usp=sharing). Individual checkpoint links are added below,
@@ -29,17 +37,10 @@ All pretrained models can be found in the dataset Google Drive [folder](https://
 
 ## Evaluation
 
-Download the dataset from [this link](https://drive.google.com/drive/folders/1A-UhzFdeLiEuTa6cvwSmHKMc1gSBvEGB?usp=sharing). Your `RELiC` folder should look like,
+Make sure you have downloaded the dataset as described [above](#setup). The evaluation script assumes the pretrained models are downloaded from the Google Drive links above and placed in the `retriever_train/saved_models`. It's best to run this on a GPU, since dense vectors need to be computed before retrieval takes place.
 
 ```
-(relic-venv) kalpesh@node187:relic-retrieval$ ls RELiC/
-test.json  train.json  val.json
-(relic-venv) kalpesh@node187:relic-retrieval$
-```
-
-This script assumes the pretrained models are downloaded from the Google Drive links above and placed in the `retriever_train/saved_models`. It's best to run this on a GPU, since dense vectors need to be computed before retrieval takes place.
-
-```
+# you may need to run "export CUDA_VISIBLE_DEVICES=0" to use GPU-0
 # remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
 python scripts/relic_evaluation.py \
     --model retriever_train/saved_models/model_denserelic_4_4 \
@@ -50,15 +51,7 @@ python scripts/relic_evaluation.py \
 
 ### Preprocess Dataset
 
-Download the dataset from [this link](https://drive.google.com/drive/folders/1A-UhzFdeLiEuTa6cvwSmHKMc1gSBvEGB?usp=sharing). Your `RELiC` folder should look like,
-
-```
-(relic-venv) kalpesh@node187:relic-retrieval$ ls RELiC/
-test.json  train.json  val.json
-(relic-venv) kalpesh@node187:relic-retrieval$
-```
-
-Next, run the following preprocessing script (adjust the `--left_sents` / `--right_sents` flags for shorter contexts):
+Make sure you have downloaded the dataset as described [above](#setup). Run the following preprocessing script (adjust the `--left_sents` / `--right_sents` flags for shorter contexts):
 
 ```
 python scripts/preprocess_lit_analysis_data.py --left_sents 4 --right_sents 4
