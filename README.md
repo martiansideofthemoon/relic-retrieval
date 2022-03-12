@@ -17,16 +17,25 @@ pip install --editable .
 
 ## Pretrained dense-ReLIC models
 
-All pretrained models can be found in the dataset Google Drive folder. Individual checkpoint links are added below,
+All pretrained models can be found in the dataset Google Drive [folder](https://drive.google.com/drive/folders/1A-UhzFdeLiEuTa6cvwSmHKMc1gSBvEGB?usp=sharing). Individual checkpoint links are added below,
 
 | Model                                   | Google Drive link |
 |-----------------------------------------|-------------------|
 | **dense-RELiC (4 left, 4 right sentences)** | [link](https://drive.google.com/drive/folders/1Y2PxHRycWucQtQCbw5OxN8eQMEZtS43h?usp=sharing)              |
 | dense-RELiC (4 left, 0 right sentences) | [link](https://drive.google.com/drive/folders/1TfKMY-XZhI5IVXPpRZ59n3j2jiw_VQcH?usp=sharing)              |
 | dense-RELiC (0 left, 4 right sentences) | [link](https://drive.google.com/drive/folders/1fw9BRrNnU9TzkabBf7PUrWyzXQCqFrB0?usp=sharing)              |
-| dense-RELiC (1 left, 1 right sentence) | [link](https://drive.google.com/drive/folders/1GFgwXyEYg0IL5eYJ-sqg9Zm2hKTVXOFt?usp=sharing)              |
+| dense-RELiC (1 left, 1 right sentences) | [link](https://drive.google.com/drive/folders/1GFgwXyEYg0IL5eYJ-sqg9Zm2hKTVXOFt?usp=sharing)              |
+| dense-RELiC (1 left, 0 right sentences) | [link](https://drive.google.com/drive/folders/1us5uy_aRl4StUxD1MzZEecB4fH--6R2e?usp=sharing)              |
 
 ## Evaluation
+
+Download the dataset from [this link](https://drive.google.com/drive/folders/1A-UhzFdeLiEuTa6cvwSmHKMc1gSBvEGB?usp=sharing). Your `RELiC` folder should look like,
+
+```
+(relic-venv) kalpesh@node187:relic-retrieval$ ls RELiC/
+test.json  train.json  val.json
+(relic-venv) kalpesh@node187:relic-retrieval$
+```
 
 This script assumes the pretrained models are downloaded from the Google Drive links above and placed in the `retriever_train/saved_models`. It's best to run this on a GPU, since dense vectors need to be computed before retrieval takes place.
 
