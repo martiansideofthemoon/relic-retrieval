@@ -23,7 +23,7 @@ test.json  train.json  val.json
 (relic-venv) kalpesh@node187:relic-retrieval$
 ```
 
-## Pretrained dense-ReLIC models
+## Pretrained dense-RELiC models
 
 All pretrained models can be found in the dataset Google Drive [folder](https://drive.google.com/drive/folders/1A-UhzFdeLiEuTa6cvwSmHKMc1gSBvEGB?usp=sharing). Individual checkpoint links are added below,
 
@@ -44,10 +44,11 @@ Make sure you have downloaded the dataset as described [above](#setup). The eval
 # remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
 python scripts/relic_evaluation.py \
     --model retriever_train/saved_models/model_denserelic_4_4 \
-    --write_to_file
+    --write_to_file \
+    --split val
 ```
 
-## Training dense-ReLIC
+## Training dense-RELiC
 
 ### Preprocess Dataset
 
@@ -116,7 +117,8 @@ pip install sentencepiece
 # remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
 python scripts/relic_evaluation_sim.py \
     --left_sents 1 --right_sents 1 \
-    --write_to_file
+    --write_to_file \
+    --split val
 ```
 
 2. **DPR** --- A retriever from [Karphukin et al. 2020](https://aclanthology.org/2020.emnlp-main.550) trained on [Natural Questions](https://ai.google.com/research/NaturalQuestions) data.
@@ -125,7 +127,8 @@ python scripts/relic_evaluation_sim.py \
 # remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
 python scripts/relic_evaluation_dpr.py \
     --left_sents 1 --right_sents 1 \
-    --write_to_file
+    --write_to_file \
+    --split val
 ```
 
 3. **c-REALM** --- A retriever from [Krishna et al. 2021](https://aclanthology.org/2021.naacl-main.393) based on [REALM](https://arxiv.org/abs/2002.08909) and trained on [ELI5](https://arxiv.org/abs/1907.09190) data.
@@ -146,13 +149,14 @@ rm -rf crealm-retriever/encoded_*
 # remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
 python scripts/relic_evaluation_crealm.py \
     --left_sents 1 --right_sents 1 \
-    --write_to_file
+    --write_to_file \
+    --split val
 ```
 
 4. **Random retrieval**
 
 ```
-python scripts/relic_evaluation_random.py  --num_samples 100
+python scripts/relic_evaluation_random.py  --num_samples 100 --split val
 ```
 
 ## Citation
