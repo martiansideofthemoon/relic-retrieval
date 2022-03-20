@@ -25,10 +25,10 @@ where `dataset["book_title"]` is a dictionary with 3 keys: `"quotes"`, `"sentenc
 
 `dataset["book_title"]["quotes"]` is a dictionary where each key is a unique identifier for one instance of the dataset. `dataset["book_title"]["quotes"]["unique_id"]` is a list with 4 items:
 
-1. A list of the sentences preceding the literary quotation
-2. The index in `dataset["book_title"]["sentences"]` of the literary quotation
-3. The length of the literary quotation in number of sentences
-4. A list of the sentences after the literary quotation
+0. A list of the sentences preceding the literary quotation
+1. The index in `dataset["book_title"]["sentences"]` of the literary quotation
+2. The length of the literary quotation in number of sentences
+3. A list of the sentences after the literary quotation
 
 `dataset["book_title"]["sentences"]` is a list of sentences in `"book_title"`
 
@@ -36,8 +36,8 @@ where `dataset["book_title"]` is a dictionary with 3 keys: `"quotes"`, `"sentenc
 
 To reconstruct the list of sentences of the literary quotation in `dataset["book_title"]["quotes"]["unique_id"]`, you would do the following:
 ``` python
-start_idx = `dataset["book_title"]["quotes"]["unique_id"][1]`
-end_idx = `dataset["book_title"]["quotes"]["unique_id"][1] + dataset["book_title"]["quotes"]["unique_id"][2]`
-quote_sents = `dataset["book_title"]["sentences"][start_idx:end_idex]
+start_idx = dataset["book_title"]["quotes"]["unique_id"][1]
+end_idx = dataset["book_title"]["quotes"]["unique_id"][1] + dataset["book_title"]["quotes"]["unique_id"][2]
+quote_sents = dataset["book_title"]["sentences"][start_idx:end_idex]
 ```
 The list of sentences in the literary quotation is `dataset["book_title"]["sentences"]`
