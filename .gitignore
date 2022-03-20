@@ -58,5 +58,6 @@ relic-venv
 relic_preprocessed
 data
 scripts/clean.sh
+scripts/score_submission_fix.py
 crealm-retriever
 RELiC

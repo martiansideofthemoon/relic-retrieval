@@ -7,7 +7,8 @@ import re
 import torch
 
 from retriever_train.inference_utils import PrefixSuffixWrapper
-from utils import build_lit_instance
+
+from utils import build_lit_instance, build_candidates, print_results, NUM_SENTS
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -45,7 +46,6 @@ print(f"Retriever {args.model} loaded which has {left_sents} left, {right_sents}
 
 BATCH_SIZE = 100
 
-NUM_SENTS = 6
 results = {
     ns: {
         "mean_rank": [],
@@ -55,7 +55,6 @@ results = {
         "recall@10": [],
         "recall@50": [],
         "recall@100": [],
-        "recall@1650": [],
         "num_candidates": []
     }
     for ns in range(1, NUM_SENTS)
@@ -65,16 +64,12 @@ submission_data = {}
 
 for book_title, book_data in data.items():
     all_quotes = [{"id": k, "quote": v} for k, v in book_data["quotes"].items()]
-    all_sentences = book_data["sentences"]
 
     # First, encode all the candidates which will be passed through suffix encoder
-    candidates = {}
-    for ns in range(1, NUM_SENTS):
-        candidates[ns] = [" ".join([x.strip() for x in all_sentences[idx:idx + ns]]) for idx in book_data["candidates"][f"{ns}_sentence"]]
-        assert all([ii == xx for ii, xx in enumerate(book_data["candidates"][f"{ns}_sentence"])])
+    candidates = build_candidates(book_data)
 
     all_suffixes = {}
-    for ns, cands in tqdm.tqdm(candidates.items(), desc="Encoding suffixes...", total=NUM_SENTS - 1):
+    for ns, cands in tqdm.tqdm(candidates.items(), desc=f"Encoding suffixes for {book_title}...", total=NUM_SENTS - 1):
         all_suffixes[ns] = []
         # ignore encoding if ranks already available
         if load_existing:
@@ -96,7 +91,7 @@ for book_title, book_data in data.items():
 
     # encode the prefixes using the prefix encoder
     all_prefices = {}
-    for ns, qts in tqdm.tqdm(all_quotes_len_dict.items(), desc="Encoding prefixes...", total=NUM_SENTS - 1):
+    for ns, qts in tqdm.tqdm(all_quotes_len_dict.items(), desc=f"Encoding prefixes for {book_title}...", total=NUM_SENTS - 1):
         all_prefices[ns] = []
         # ignore encoding if ranks already available
         if load_existing:
@@ -111,14 +106,9 @@ for book_title, book_data in data.items():
             all_prefices[ns] = torch.cat(all_prefices[ns], dim=0)
 
     for ns in range(1, NUM_SENTS):
-        if not load_existing and len(all_prefices[ns]) == 0:
-            # if no quotes for this length in this book, print results for this length and move on to next length/book
-            print(f"\nResults with {ns} sentence quotes ({len(results[ns]['mean_rank'])} instances):")
-            for key in ["mean_rank", "recall@1", "recall@3", "recall@5", "recall@10", "recall@50", "num_candidates"]:
-                print(
-                    f"{key} = {np.mean(results[ns][key]):.4f}", end=', '
-                )
-            print("")
+        if len(all_prefices[ns]) == 0:
+            print("yoloyoloyoloyoloyoloyoloyoloyoloyolo")
+            # if no quotes for this length in this book, continue
             continue
 
         # compute inner product between all pairs of quotes and candidates of same number of sentences
@@ -153,9 +143,6 @@ for book_title, book_data in data.items():
                 else:
                     quote.extend([gold_rank, sorted_score_idx[qnum].cpu().tolist(), None])
 
-        if len(ranks) == 0:
-            # test set submission
-            continue
         results[ns]["mean_rank"].extend(ranks)
         results[ns]["recall@1"].extend([x <= 1 for x in ranks])
         results[ns]["recall@3"].extend([x <= 3 for x in ranks])
@@ -163,30 +150,12 @@ for book_title, book_data in data.items():
         results[ns]["recall@10"].extend([x <= 10 for x in ranks])
         results[ns]["recall@50"].extend([x <= 50 for x in ranks])
         results[ns]["recall@100"].extend([x <= 100 for x in ranks])
-        results[ns]["recall@1650"].extend([x <= 1650 for x in ranks])
         num_cands = len(book_data["candidates"][f"{ns}_sentence"])
         results[ns]["num_candidates"].extend([num_cands for _ in ranks])
 
-        print(f"\nResults with {ns} sentence quotes ({len(results[ns]['mean_rank'])} instances):")
-        for key in ["mean_rank", "recall@1", "recall@3", "recall@5", "recall@10", "recall@50", "recall@100", "recall@1650", "num_candidates"]:
-            print(
-                f"{key} = {np.mean(results[ns][key]):.4f}", end=', '
-            )
-        print("")
+print_results(results)
 
-    if len(results[1]['mean_rank']) == 0:
-        continue
-
-    # print overall results
-    print(f"\nResults with all quotes ({sum([len(results[ns]['mean_rank']) for ns in range(1, NUM_SENTS)])} instances):")
-    for key in ["mean_rank", "recall@1", "recall@3", "recall@5", "recall@10", "recall@50", "recall@100", "recall@1650", "num_candidates"]:
-        all_results = [x for ns in range(1, NUM_SENTS) for x in results[ns][key]]
-        print(
-            f"{key} = {np.mean(all_results):.4f}", end=', '
-        )
-    print("")
-
-if not load_existing and args.cache:
+if not load_existing and (args.cache or args.rewrite_cache):
     with open(f"{args.output_dir}/{args.split}_with_ranks.json", "w") as f:
         f.write(json.dumps(data))
 

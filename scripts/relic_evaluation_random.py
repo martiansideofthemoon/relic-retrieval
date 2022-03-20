@@ -6,7 +6,7 @@ import os
 import re
 import torch
 
-from utils import build_lit_instance
+from utils import build_lit_instance, build_candidates, NUM_SENTS
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -21,7 +21,6 @@ with open(f"{args.input_dir}/{args.split}.json", "r") as f:
 
 BATCH_SIZE = 100
 
-NUM_SENTS = 6
 results = {
     ns: {
         "mean_rank": [],
@@ -31,7 +30,6 @@ results = {
         "recall@10": [],
         "recall@50": [],
         "recall@100": [],
-        "recall@1650": [],
         "num_candidates": []
     }
     for ns in range(1, NUM_SENTS)
@@ -41,12 +39,8 @@ total = 0
 for samples in range(args.num_samples):
     for book_title, book_data in data.items():
         all_quotes = [v for k, v in book_data["quotes"].items()]
-        all_sentences = book_data["sentences"]
-
         # First, encode all the candidates which will be passed through suffix encoder
-        candidates = {}
-        for ns in range(1, NUM_SENTS):
-            candidates[ns] = [" ".join([x.strip() for x in all_sentences[idx:idx + ns]]) for idx in book_data["candidates"][f"{ns}_sentence"]]
+        candidates = build_candidates(book_data)
 
         # preprocess all literary analysis quotes to have left_sents sentences before <mask> and right_sents sentences after
         all_masked_quotes = build_lit_instance(all_quotes, 1, 1, append_quote=False)
@@ -78,7 +72,6 @@ for samples in range(args.num_samples):
             results[ns]["recall@10"].extend([x <= 10 for x in ranks])
             results[ns]["recall@50"].extend([x <= 50 for x in ranks])
             results[ns]["recall@100"].extend([x <= 100 for x in ranks])
-            results[ns]["recall@1650"].extend([x <= 1650 for x in ranks])
             num_cands = len(book_data["candidates"][f"{ns}_sentence"])
             results[ns]["num_candidates"].extend([num_cands for _ in ranks])
 
