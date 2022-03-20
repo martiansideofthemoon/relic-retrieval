@@ -52,7 +52,8 @@ for ns in range(1, NUM_SENTS):
     print("")
 
 # print overall results
-print(f"\nResults with all quotes ({sum([len(results[ns]['recall@1']) for ns in range(1, NUM_SENTS)])} instances):")
+total_instances = sum([len(results[ns]['recall@1']) for ns in range(1, NUM_SENTS)])
+print(f"\nResults with all quotes ({total_instances} instances):")
 for key in ["recall@1", "recall@3", "recall@5", "recall@10", "recall@50", "recall@100"]:
     all_results = [x for ns in range(1, NUM_SENTS) for x in results[ns][key]]
     print(

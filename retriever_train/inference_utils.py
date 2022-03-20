@@ -58,11 +58,10 @@ class PrefixSuffixWrapper(object):
         args = self.args
 
         instance = self.preprocess_sentences(contexts, vectors_type)
-        return self.model.get_vectors({
-                "prefices": torch.tensor(instance.prefices).unsqueeze(0),
-                "prefix_masks": torch.tensor(instance.prefix_masks).unsqueeze(0),
-                "suffices": torch.tensor(instance.suffices).unsqueeze(0),
-                "suffix_masks": torch.tensor(instance.suffix_masks).unsqueeze(0)
-            },
-            vectors_type=vectors_type
-        )
+        input_tensors = {
+            "prefices": torch.tensor(instance.prefices).unsqueeze(0),
+            "prefix_masks": torch.tensor(instance.prefix_masks).unsqueeze(0),
+            "suffices": torch.tensor(instance.suffices).unsqueeze(0),
+            "suffix_masks": torch.tensor(instance.suffix_masks).unsqueeze(0)
+        }
+        return self.model.get_vectors(input_tensors, vectors_type=vectors_type)

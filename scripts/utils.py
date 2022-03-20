@@ -44,28 +44,27 @@ def build_candidates(book_data):
     candidates = {}
     all_sentences = book_data["sentences"]
     for ns in range(1, NUM_SENTS):
-        candidates[ns] = [" ".join([x.strip() for x in all_sentences[idx:idx + ns]]) for idx in book_data["candidates"][f"{ns}_sentence"]]
+        candidates[ns] = [" ".join([x.strip() for x in all_sentences[idx:idx + ns]])
+                          for idx in book_data["candidates"][f"{ns}_sentence"]]
         assert all([ii == xx for ii, xx in enumerate(book_data["candidates"][f"{ns}_sentence"])])
     return candidates
 
 
 def print_results(results):
+    keys = ["mean_rank", "recall@1", "recall@3", "recall@5", "recall@10", "recall@50", "recall@100", "num_candidates"]
     if len(results[1]["recall@1"]) > 0:
         for ns in range(1, NUM_SENTS):
             print(f"\nResults with {ns} sentence quotes ({len(results[ns]['mean_rank'])} instances):")
-            for key in ["mean_rank", "recall@1", "recall@3", "recall@5", "recall@10", "recall@50", "recall@100", "num_candidates"]:
-                print(
-                    f"{key} = {np.mean(results[ns][key]):.4f}", end=', '
-                )
+            for key in keys:
+                print(f"{key} = {np.mean(results[ns][key]):.4f}", end=', ')
             print("")
 
         # print overall results
-        print(f"\nResults with all quotes ({sum([len(results[ns]['mean_rank']) for ns in range(1, NUM_SENTS)])} instances):")
-        for key in ["mean_rank", "recall@1", "recall@3", "recall@5", "recall@10", "recall@50", "recall@100", "num_candidates"]:
+        total_instances = sum([len(results[ns]['mean_rank']) for ns in range(1, NUM_SENTS)])
+        print(f"\nResults with all quotes ({total_instances} instances):")
+        for key in keys:
             all_results = [x for ns in range(1, NUM_SENTS) for x in results[ns][key]]
-            print(
-                f"{key} = {np.mean(all_results):.4f}", end=', '
-            )
+            print(f"{key} = {np.mean(all_results):.4f}", end=', ')
         print("")
     else:
         print("Not printing results since the answers are hidden for this split...")
