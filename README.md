@@ -41,11 +41,10 @@ Make sure you have downloaded the dataset as described [above](#setup). The eval
 
 ```
 # you may need to run "export CUDA_VISIBLE_DEVICES=0" to use GPU-0
-# remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
+# remove --cache if you don't wish to write a large output file with retrieval ranks
 python scripts/relic_evaluation.py \
     --model retriever_train/saved_models/model_denserelic_4_4 \
-    --write_to_file \
-    --split val
+    --cache
 ```
 
 ## Training dense-RELiC
@@ -114,21 +113,19 @@ Additional libraries will be needed to run the baseline retrievers.
 pip install nltk
 pip install sentencepiece
 
-# remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
+# remove --cache if you don't wish to write a large output file with retrieval ranks
 python scripts/relic_evaluation_sim.py \
     --left_sents 1 --right_sents 1 \
-    --write_to_file \
-    --split val
+    --cache
 ```
 
 2. **DPR** --- A retriever from [Karphukin et al. 2020](https://aclanthology.org/2020.emnlp-main.550) trained on [Natural Questions](https://ai.google.com/research/NaturalQuestions) data.
 
 ```
-# remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
+# remove --cache if you don't wish to write a large output file with retrieval ranks
 python scripts/relic_evaluation_dpr.py \
     --left_sents 1 --right_sents 1 \
-    --write_to_file \
-    --split val
+    --cache
 ```
 
 3. **c-REALM** --- A retriever from [Krishna et al. 2021](https://aclanthology.org/2021.naacl-main.393) based on [REALM](https://arxiv.org/abs/2002.08909) and trained on [ELI5](https://arxiv.org/abs/1907.09190) data.
@@ -146,11 +143,10 @@ unzip retriever.zip && rm retriever.zip
 mv retriever crealm-retriever
 rm -rf crealm-retriever/encoded_*
 
-# remove --write_to_file if you don't wish to write a 1GB output file with retrieval ranks
+# remove --cache if you don't wish to write a large output file with retrieval ranks
 python scripts/relic_evaluation_crealm.py \
     --left_sents 1 --right_sents 1 \
-    --write_to_file \
-    --split val
+    --cache
 ```
 
 4. **Random retrieval**

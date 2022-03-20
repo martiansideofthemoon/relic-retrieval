@@ -13,16 +13,18 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input_dir', default="RELiC", type=str)
-parser.add_argument('--split', default="test", type=str)
+parser.add_argument('--split', default="val", type=str)
 parser.add_argument('--model', default="retriever_train/saved_models/model_0", type=str)
 parser.add_argument('--output_dir', default=None, type=str)
-parser.add_argument('--write_to_file', action='store_true')
+parser.add_argument('--rewrite_cache', action='store_true')
+parser.add_argument('--cache_scores', action='store_true')
+parser.add_argument('--cache', action='store_true')
 args = parser.parse_args()
 
 if args.output_dir is None:
     args.output_dir = args.model
 
-if os.path.exists(f"{args.model}/{args.split}_with_ranks.json"):
+if not args.rewrite_cache and os.path.exists(f"{args.model}/{args.split}_with_ranks.json"):
     load_existing = True
     with open(f"{args.model}/{args.split}_with_ranks.json", "r") as f:
         data = json.loads(f.read())
@@ -59,15 +61,17 @@ results = {
     for ns in range(1, NUM_SENTS)
 }
 total = 0
+submission_data = {}
 
 for book_title, book_data in data.items():
-    all_quotes = [v for k, v in book_data["quotes"].items()]
+    all_quotes = [{"id": k, "quote": v} for k, v in book_data["quotes"].items()]
     all_sentences = book_data["sentences"]
 
     # First, encode all the candidates which will be passed through suffix encoder
     candidates = {}
     for ns in range(1, NUM_SENTS):
         candidates[ns] = [" ".join([x.strip() for x in all_sentences[idx:idx + ns]]) for idx in book_data["candidates"][f"{ns}_sentence"]]
+        assert all([ii == xx for ii, xx in enumerate(book_data["candidates"][f"{ns}_sentence"])])
 
     all_suffixes = {}
     for ns, cands in tqdm.tqdm(candidates.items(), desc="Encoding suffixes...", total=NUM_SENTS - 1):
@@ -84,11 +88,11 @@ for book_title, book_data in data.items():
         all_suffixes[ns] = torch.cat(all_suffixes[ns], dim=0)
 
     # preprocess all literary analysis quotes to have left_sents sentences before <mask> and right_sents sentences after
-    all_masked_quotes = build_lit_instance(all_quotes, left_sents, right_sents, append_quote=False)
+    all_masked_quotes = build_lit_instance([x["quote"] for x in all_quotes], left_sents, right_sents, append_quote=False)
     # break up data by sentence length
     all_quotes_len_dict = {k: [] for k in range(1, NUM_SENTS)}
     for aq, amq in zip(all_quotes, all_masked_quotes):
-        all_quotes_len_dict[aq[2]].append([aq, amq])
+        all_quotes_len_dict[aq["quote"][2]].append([aq, amq])
 
     # encode the prefixes using the prefix encoder
     all_prefices = {}
@@ -126,23 +130,32 @@ for book_title, book_data in data.items():
                 sorted_score_idx, sorted_score_vals = sorted_scores.indices, sorted_scores.values
 
         ranks = []
-        for qnum, (quote, context) in enumerate(all_quotes_len_dict[ns]):
+        for qnum, (quote_data, context) in enumerate(all_quotes_len_dict[ns]):
+            quote_id, quote = quote_data["id"], quote_data["quote"]
             assert ns == quote[2]
             # map the gold quote to the position in candidate list
             gold_answer = quote[1]
-            try:
-                gold_candidate_index = book_data["candidates"][f"{ns}_sentence"].index(gold_answer)
-            except:
-                import pdb; pdb.set_trace()
-                pass
+
+            if gold_answer is None:
+                # this is the hidden test set, output quote_id ---> top 100 ranks list
+                top_100_idx = sorted_score_idx[qnum].cpu().tolist()[:100]
+                submission_data[quote_id] = top_100_idx
+                continue
+
             # get final rank by looking up rank list
             if load_existing:
-                ranks.append(quote[-4])
+                ranks.append(quote[-3])
             else:
-                gold_rank = sorted_score_idx[qnum].tolist().index(gold_candidate_index) + 1
+                gold_rank = sorted_score_idx[qnum].tolist().index(gold_answer) + 1
                 ranks.append(gold_rank)
-                quote.extend([gold_rank, gold_candidate_index, sorted_score_idx[qnum].cpu().tolist(), sorted_score_vals[qnum].cpu().tolist()])
+                if args.cache_scores:
+                    quote.extend([gold_rank, sorted_score_idx[qnum].cpu().tolist(), sorted_score_vals[qnum].cpu().tolist()])
+                else:
+                    quote.extend([gold_rank, sorted_score_idx[qnum].cpu().tolist(), None])
 
+        if len(ranks) == 0:
+            # test set submission
+            continue
         results[ns]["mean_rank"].extend(ranks)
         results[ns]["recall@1"].extend([x <= 1 for x in ranks])
         results[ns]["recall@3"].extend([x <= 3 for x in ranks])
@@ -161,6 +174,9 @@ for book_title, book_data in data.items():
             )
         print("")
 
+    if len(results[1]['mean_rank']) == 0:
+        continue
+
     # print overall results
     print(f"\nResults with all quotes ({sum([len(results[ns]['mean_rank']) for ns in range(1, NUM_SENTS)])} instances):")
     for key in ["mean_rank", "recall@1", "recall@3", "recall@5", "recall@10", "recall@50", "recall@100", "recall@1650", "num_candidates"]:
@@ -170,6 +186,11 @@ for book_title, book_data in data.items():
         )
     print("")
 
-if not load_existing and args.write_to_file:
+if not load_existing and args.cache:
     with open(f"{args.output_dir}/{args.split}_with_ranks.json", "w") as f:
         f.write(json.dumps(data))
+
+if len(submission_data) > 0:
+    with open(f"{args.output_dir}/{args.split}_submission.json", "w") as f:
+        f.write(json.dumps(submission_data))
+    print(f"Output ranks to {args.output_dir}/{args.split}_submission.json")

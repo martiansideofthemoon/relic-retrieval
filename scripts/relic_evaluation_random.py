@@ -12,7 +12,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input_dir', default="RELiC", type=str)
-parser.add_argument('--split', default="test", type=str)
+parser.add_argument('--split', default="val", type=str)
 parser.add_argument('--num_samples', default=100, type=int)
 args = parser.parse_args()
 
