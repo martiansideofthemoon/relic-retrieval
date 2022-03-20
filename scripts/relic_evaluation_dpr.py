@@ -148,7 +148,7 @@ for book_title, book_data in data.items():
         num_cands = len(book_data["candidates"][f"{ns}_sentence"])
         results[ns]["num_candidates"].extend([num_cands for _ in ranks])
 
-print_results(results, NUM_SENTS)
+print_results(results)
 
 if not load_existing and (args.cache or args.rewrite_cache):
     with open(f"{args.output_dir}/{args.split}_with_ranks_dpr_left_{args.left_sents}_right_{args.right_sents}.json", "w") as f:
