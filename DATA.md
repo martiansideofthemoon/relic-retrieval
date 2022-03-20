@@ -40,4 +40,3 @@ start_idx = dataset["book_title"]["quotes"]["unique_id"][1]
 end_idx = dataset["book_title"]["quotes"]["unique_id"][1] + dataset["book_title"]["quotes"]["unique_id"][2]
 quote_sents = dataset["book_title"]["sentences"][start_idx:end_idex]
 ```
-The list of sentences in the literary quotation is `dataset["book_title"]["sentences"]`
