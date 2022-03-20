@@ -3,22 +3,70 @@
 RELiC consists of three `.json` files: `train.json`, `val.json`, and `test.json`. Each of these files has the following format:
 
 ```json
-"book_title": {"quotes": {
-                          "unique_id1": [
-                                          ["pre_sent1", "pre_sent2", "pre_sent3", "pre_sent4"],
-                                          1,
-                                          4,
-                                          ["sub_sent1", "sub_sent2", "sub_sent3", "sub_sent4"]
-                                        ]
-                         },
-              "sentences": ["sent1", "sent2", "sent3"],
-              "candidates": {"1_sentence": [0,1,2],
-                            "2_sentence": [0,2,4],
-                            "3_sentence": [0,3,6],
-                            "4_sentence": [0,4,8],
-                            "5_sentence": [0,5,10]
-                            }
-              }
+{
+   "book_title": {
+      "quotes": {
+         "unique_id1": [
+            [
+               "pre_sent1",
+               "pre_sent2",
+               "pre_sent3",
+               "pre_sent4"
+            ],
+            1,
+            4,
+            [
+               "sub_sent1",
+               "sub_sent2",
+               "sub_sent3",
+               "sub_sent4"
+            ]
+         ]
+      },
+      "sentences": [
+         "sent1",
+         "sent2",
+         "sent3"
+      ],
+      "candidates": {
+         "1_sentence": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+         ],
+         "2_sentence": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+         ],
+         "3_sentence": [
+            0,
+            1,
+            2,
+            3,
+            4
+         ],
+         "4_sentence": [
+            0,
+            1,
+            2,
+            3
+         ],
+         "5_sentence": [
+            0,
+            1,
+            2
+         ]
+      }
+   }
+}
 
 ```
 where `dataset["book_title"]` is a dictionary with 3 keys: `"quotes"`, `"sentences",` and `"candidates"`.
@@ -39,14 +87,4 @@ To reconstruct the list of sentences of the literary quotation in `dataset["book
 start_idx = dataset["book_title"]["quotes"]["unique_id"][1]
 end_idx = dataset["book_title"]["quotes"]["unique_id"][1] + dataset["book_title"]["quotes"]["unique_id"][2]
 quote_sents = dataset["book_title"]["sentences"][start_idx:end_idex]
-```
-
-# Leaderboard Submission
-
-You may submit your predictions for the test set here: https://forms.gle/1B6JuQ3nbGXCR2kC8
-
-The format of your submission file should be a `.json` file that is a dictionary where the unique IDs of each test set instance are the keys, and the values are a rank list. This list should contain the 100 indicies of the top 100 candidates retriever by your model, in rank order. For example, if your retriever's top-ranked candidate is `99` for test set instance `"070789"`, one entry in your `.json` dict should look like:
-
-``` json
-"070789": [99, ...] 
 ```

@@ -159,6 +159,17 @@ python scripts/relic_evaluation_crealm.py \
 python scripts/relic_evaluation_random.py  --num_samples 100 --split val
 ```
 
+## Leaderboard Submission
+
+You may submit your predictions for the test set here: https://forms.gle/1B6JuQ3nbGXCR2kC8
+
+The format of your submission file should be a `.json` file that is a dictionary where the unique IDs of each test set instance are the keys, and the values are a rank list. This list should contain the 100 indicies of the top 100 candidates retriever by your model, in rank order. For example, if your retriever's top-ranked candidate is `99` for test set instance `"070789"`, one entry in your `.json` dict should look like:
+
+``` json
+"070789": [99, ...]
+```
+
+
 ## Citation
 
 If you found our paper or this repository useful, please cite:
