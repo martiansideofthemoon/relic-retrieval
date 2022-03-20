@@ -107,7 +107,6 @@ for book_title, book_data in data.items():
 
     for ns in range(1, NUM_SENTS):
         if len(all_prefices[ns]) == 0:
-            print("yoloyoloyoloyoloyoloyoloyoloyoloyolo")
             # if no quotes for this length in this book, continue
             continue
 
