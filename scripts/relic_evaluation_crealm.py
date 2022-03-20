@@ -24,6 +24,7 @@ parser.add_argument('--model', default="crealm-retriever", type=str)
 parser.add_argument('--left_sents', default=4, type=int)
 parser.add_argument('--right_sents', default=4, type=int)
 parser.add_argument('--output_dir', default=None, type=str)
+parser.add_argument('--eval_small', action='store_true')
 parser.add_argument('--rewrite_cache', action='store_true')
 parser.add_argument('--cache_scores', action='store_true')
 parser.add_argument('--cache', action='store_true')
@@ -61,7 +62,13 @@ results = {
 total = 0
 submission_data = {}
 
+print(f"Evaluating {args.split} split with {len(data)} books...")
+
 for book_title, book_data in data.items():
+    # quick evaluation of only the first book
+    if args.eval_small and len(results[1]["mean_rank"]) > 0:
+        break
+
     all_quotes = [{"id": k, "quote": v} for k, v in book_data["quotes"].items()]
     # First, encode all the candidates which will be passed through suffix encoder
     candidates = build_candidates(book_data)
@@ -166,11 +173,11 @@ for book_title, book_data in data.items():
 
 print_results(results)
 
-if not load_existing and (args.cache or args.rewrite_cache):
+if not load_existing and (args.cache or args.rewrite_cache) and not args.eval_small and len(submission_data) == 0:
     with open(f"{args.output_dir}/{args.split}_with_ranks_crealm_left_{args.left_sents}_right_{args.right_sents}.json", "w") as f:
         f.write(json.dumps(data))
 
-if len(submission_data) > 0:
-    with open(f"{args.output_dir}/{args.split}_submission.json", "w") as f:
+if len(submission_data) > 0 and not args.eval_small:
+    with open(f"{args.output_dir}/{args.split}_left_{args.left_sents}_right_{args.right_sents}_submission.json", "w") as f:
         f.write(json.dumps(submission_data))
     print(f"Output ranks to {args.output_dir}/{args.split}_submission.json")

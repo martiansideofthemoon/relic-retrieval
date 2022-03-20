@@ -36,6 +36,8 @@ results = {
 }
 total = 0
 
+print(f"Evaluating {args.split} split with {len(data)} books...")
+
 for samples in range(args.num_samples):
     for book_title, book_data in data.items():
         all_quotes = [v for k, v in book_data["quotes"].items()]

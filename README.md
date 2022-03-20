@@ -1,6 +1,6 @@
 # RELiC: Retrieving Evidence for Literary Claims
 
-This is the official codebase accompanying our ACL 2022 paper "RELiC: Retrieving Evidence for Literary Claims" (https://openreview.net/forum?id=xcelRQScTjP).
+This is the official codebase accompanying our ACL 2022 paper "RELiC: Retrieving Evidence for Literary Claims" (https://relic.cs.umass.edu).
 
 ## Setup
 
@@ -45,6 +45,22 @@ Make sure you have downloaded the dataset as described [above](#setup). The eval
 python scripts/relic_evaluation.py \
     --model retriever_train/saved_models/model_denserelic_4_4 \
     --cache
+
+# output
+Results with all quotes (7833 instances):
+mean_rank = 704.6351, recall@1 = 0.0672, recall@3 = 0.1407, recall@5 = 0.1840, recall@10 = 0.2578, recall@50 = 0.4501, recall@100 = 0.5361, num_candidates = 10199.8426
+```
+
+The above script may take a while to finish (20-30 minutes on validation data). To run it on a single book only, run:
+
+```
+python scripts/relic_evaluation.py \
+    --model retriever_train/saved_models/model_denserelic_4_4 \
+    --eval_small
+
+# output
+Results with all quotes (1648 instances):
+mean_rank = 796.5661, recall@1 = 0.0583, recall@3 = 0.1147, recall@5 = 0.1481, recall@10 = 0.2093, recall@50 = 0.3914, recall@100 = 0.4745, num_candidates = 9775.8471
 ```
 
 ## Training dense-RELiC
@@ -114,18 +130,14 @@ pip install nltk
 pip install sentencepiece
 
 # remove --cache if you don't wish to write a large output file with retrieval ranks
-python scripts/relic_evaluation_sim.py \
-    --left_sents 1 --right_sents 1 \
-    --cache
+python scripts/relic_evaluation_sim.py --left_sents 1 --right_sents 1 --cache
 ```
 
 2. **DPR** --- A retriever from [Karphukin et al. 2020](https://aclanthology.org/2020.emnlp-main.550) trained on [Natural Questions](https://ai.google.com/research/NaturalQuestions) data.
 
 ```
 # remove --cache if you don't wish to write a large output file with retrieval ranks
-python scripts/relic_evaluation_dpr.py \
-    --left_sents 1 --right_sents 1 \
-    --cache
+python scripts/relic_evaluation_dpr.py --left_sents 1 --right_sents 1 --cache
 ```
 
 3. **c-REALM** --- A retriever from [Krishna et al. 2021](https://aclanthology.org/2021.naacl-main.393) based on [REALM](https://arxiv.org/abs/2002.08909) and trained on [ELI5](https://arxiv.org/abs/1907.09190) data.
@@ -144,9 +156,7 @@ mv retriever crealm-retriever
 rm -rf crealm-retriever/encoded_*
 
 # remove --cache if you don't wish to write a large output file with retrieval ranks
-python scripts/relic_evaluation_crealm.py \
-    --left_sents 1 --right_sents 1 \
-    --cache
+python scripts/relic_evaluation_crealm.py --left_sents 1 --right_sents 1 --cache
 ```
 
 4. **Random retrieval**
@@ -157,7 +167,7 @@ python scripts/relic_evaluation_random.py  --num_samples 100 --split val
 
 ## Leaderboard Submission
 
-You may submit your predictions for the test set here: https://forms.gle/1B6JuQ3nbGXCR2kC8
+You may submit your predictions for the test set here: https://forms.gle/1B6JuQ3nbGXCR2kC8. The leaderboard is maintained on the RELiC project page [here](https://relic.cs.umass.edu/leaderboard.html).
 
 The format of your submission file should be a `.json` file that is a dictionary where the unique IDs of each test set quote are the keys, and the values are a rank list. This list should contain the 100 indices of the top 100 candidates retriever by your model, in rank order. For example, if your retriever's top-ranked candidate is `99` for test set quote ID `"070789"` and `1532` for quote ID `"070790"`, your `.json` dict should look like:
 
@@ -169,7 +179,7 @@ The format of your submission file should be a `.json` file that is a dictionary
 }
 ```
 
-To perform this with dense-RELiC (or any of our other baselines), run the corresponding evaluation script with the `--split test` flag:
+To make this file with dense-RELiC (or any of our other baselines), run the corresponding evaluation script with the `--split test` flag:
 
 ```
 python scripts/relic_evaluation.py \

@@ -17,6 +17,7 @@ parser.add_argument('--input_dir', default="RELiC", type=str)
 parser.add_argument('--split', default="val", type=str)
 parser.add_argument('--model', default="retriever_train/saved_models/model_0", type=str)
 parser.add_argument('--output_dir', default=None, type=str)
+parser.add_argument('--eval_small', action='store_true')
 parser.add_argument('--rewrite_cache', action='store_true')
 parser.add_argument('--cache_scores', action='store_true')
 parser.add_argument('--cache', action='store_true')
@@ -62,7 +63,13 @@ results = {
 total = 0
 submission_data = {}
 
+print(f"Evaluating {args.split} split with {len(data)} books...")
+
 for book_title, book_data in data.items():
+    # quick evaluation of only the first book
+    if args.eval_small and len(results[1]["mean_rank"]) > 0:
+        break
+
     all_quotes = [{"id": k, "quote": v} for k, v in book_data["quotes"].items()]
 
     # First, encode all the candidates which will be passed through suffix encoder
@@ -106,7 +113,7 @@ for book_title, book_data in data.items():
             all_prefices[ns] = torch.cat(all_prefices[ns], dim=0)
 
     for ns in range(1, NUM_SENTS):
-        if len(all_prefices[ns]) == 0:
+        if not load_existing and len(all_prefices[ns]) == 0:
             # if no quotes for this length in this book, continue
             continue
 
@@ -154,11 +161,11 @@ for book_title, book_data in data.items():
 
 print_results(results)
 
-if not load_existing and (args.cache or args.rewrite_cache):
+if not load_existing and (args.cache or args.rewrite_cache) and not args.eval_small and len(submission_data) == 0:
     with open(f"{args.output_dir}/{args.split}_with_ranks.json", "w") as f:
         f.write(json.dumps(data))
 
-if len(submission_data) > 0:
+if len(submission_data) > 0 and not args.eval_small:
     with open(f"{args.output_dir}/{args.split}_submission.json", "w") as f:
         f.write(json.dumps(submission_data))
     print(f"Output ranks to {args.output_dir}/{args.split}_submission.json")
