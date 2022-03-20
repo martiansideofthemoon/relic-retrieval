@@ -159,10 +159,14 @@ python scripts/relic_evaluation_random.py  --num_samples 100 --split val
 
 You may submit your predictions for the test set here: https://forms.gle/1B6JuQ3nbGXCR2kC8
 
-The format of your submission file should be a `.json` file that is a dictionary where the unique IDs of each test set quote are the keys, and the values are a rank list. This list should contain the 100 indices of the top 100 candidates retriever by your model, in rank order. For example, if your retriever's top-ranked candidate is `99` for test set instance `"070789"`, one entry in your `.json` dict should look like:
+The format of your submission file should be a `.json` file that is a dictionary where the unique IDs of each test set quote are the keys, and the values are a rank list. This list should contain the 100 indices of the top 100 candidates retriever by your model, in rank order. For example, if your retriever's top-ranked candidate is `99` for test set quote ID `"070789"` and `1532` for quote ID `"070790"`, your `.json` dict should look like:
 
 ``` json
-"070789": [99, ...]
+{
+    "070789": [99, ...],
+    "070790": [1532, ...],
+    ...
+}
 ```
 
 To perform this with dense-RELiC (or any of our other baselines), run the corresponding evaluation script with the `--split test` flag:
