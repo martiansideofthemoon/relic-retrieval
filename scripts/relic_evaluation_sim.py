@@ -163,4 +163,4 @@ if not load_existing and (args.cache or args.rewrite_cache) and not args.eval_sm
 if len(submission_data) > 0 and not args.eval_small:
     with open(f"{args.output_dir}/{args.split}_left_{args.left_sents}_right_{args.right_sents}_submission.json", "w") as f:
         f.write(json.dumps(submission_data))
-    print(f"Output ranks to {args.output_dir}/{args.split}_submission.json")
+    print(f"Output ranks to {args.output_dir}/{args.split}_left_{args.left_sents}_right_{args.right_sents}_submission.json")

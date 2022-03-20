@@ -79,7 +79,7 @@ for samples in range(args.num_samples):
 
     # print overall results
     print(f"\nResults with all quotes ({sum([len(results[ns]['mean_rank']) for ns in range(1, NUM_SENTS)])} instances):")
-    for key in ["mean_rank", "recall@1", "recall@3", "recall@5", "recall@10", "recall@50", "recall@100", "recall@1650", "num_candidates"]:
+    for key in ["mean_rank", "recall@1", "recall@3", "recall@5", "recall@10", "recall@50", "recall@100", "num_candidates"]:
         all_results = [x for ns in range(1, NUM_SENTS) for x in results[ns][key]]
         print(
             f"{key} = {np.mean(all_results):.4f}", end=', '
