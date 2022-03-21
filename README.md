@@ -1,6 +1,6 @@
 # RELiC: Retrieving Evidence for Literary Claims
 
-This is the official codebase accompanying our ACL 2022 paper "RELiC: Retrieving Evidence for Literary Claims" (https://relic.cs.umass.edu).
+This is the official codebase accompanying our ACL 2022 paper "RELiC: Retrieving Evidence for Literary Claims" (https://relic.cs.umass.edu). You can find our paper on arXiv [here](https://arxiv.org/abs/2203.10053).
 
 ## Setup
 
@@ -190,7 +190,9 @@ python scripts/relic_evaluation.py \
 This will output a file `retriever_train/saved_models/model_denserelic_4_4/test_submission.json`, which you should upload to the Google Form. We will read this JSON file using [`scripts/score_submission.py`](scripts/score_submission.py) using a hidden key file, and upload the results on the leaderboard.
 
 
-## Citation
+## Contact & Citation
+
+If you run into any issues, please contact [kbthai@umass.edu](mailto:kbthai@umass.edu) and [kalpesh@cs.umass.edu](mailto:kalpesh@cs.umass.edu).
 
 If you found our paper or this repository useful, please cite:
 
