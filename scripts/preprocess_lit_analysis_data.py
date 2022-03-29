@@ -16,7 +16,7 @@ parser.add_argument("--right_sents", default=4, type=int)
 parser.add_argument("--negative_examples", default=100, type=int)
 args = parser.parse_args()
 
-for split in ["train", "val", "test"]:
+for split in ["train", "val"]:
     print(f"Preprocessing {split} split...")
     with open(f"{args.input_dir}/{split}.json", "r") as f:
         data = json.loads(f.read())
