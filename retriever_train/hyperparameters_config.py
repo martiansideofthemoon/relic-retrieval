@@ -19,7 +19,7 @@ lit_analysis_both = [
 
 lit_analysis_left = [
     [('model_name',), ['roberta-base']],
-    [('dataset',), ["relic_preprocessed/left_1_right_0_neg_100"]],
+    [('dataset',), ["relic_preprocessed/left_4_right_0_neg_100"]],
     [('batch_size',), [1]],
     [('accumulation',), [1]],
     [('num_epochs',), [10]],
@@ -38,7 +38,7 @@ lit_analysis_left = [
 
 lit_analysis_right = [
     [('model_name',), ['roberta-base']],
-    [('dataset',), ["relic_preprocessed/left_0_right_1_neg_100"]],
+    [('dataset',), ["relic_preprocessed/left_0_right_4_neg_100"]],
     [('batch_size',), [1]],
     [('accumulation',), [1]],
     [('num_epochs',), [10]],
