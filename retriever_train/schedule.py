@@ -34,7 +34,7 @@ other_dependencies = {
 
 
 top_details = "RoBERTa-base retriever on new RELIC dataset 0/1."
-hyperparameters = lit_analysis_right
+hyperparameters = lit_analysis_both
 
 run_id = int(get_run_id())
 key_hyperparameters = [x[0] for x in hyperparameters]
